@@ -1,2 +1,9 @@
-# PLUT0_V3-universal-script
+# PLUT0_V3
 a decent roblox exploiting script
+
+it has things you will typically need in a nice universal script that can be used in any game
+
+it has visual things graphical things and etc.
+also it includes aimlock and esp (for the people that have skill issue).
+and the best part yet, it has alot of futures for trolling.
+some parts of the script wasnt made by me so credit to the original creators.
