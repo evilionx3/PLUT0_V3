@@ -1,3 +1,8 @@
+-- i made this open source because i fucking hate obfuscations
+-- enjoy this script also you can modify the source code as you want
+-- you can steal the source BUT please dont take this and claim it as yours thanks!
+
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
 
@@ -66,9 +71,8 @@ infoTab:AddParagraph("informative","the float script is filter enabled (FE) mean
 infoTab:AddParagraph("compatibility","this script hub is universal meaning it can run on all games, also it can run on most executors but not all (mostly wont run on the shitty ones)")
 infoTab:AddParagraph("fun fact!","this script hub was made in 7 days also this script has 2.6k lines of code (for now)")
 infoTab:AddParagraph("informative","the Low GfX will remove all the decals,textures and etc. of youre game making it look shitty but boosts FPS.")
-
+infoTab:AddParagraph("informative","the fling gui was not made by me")
 ----------------------------------------------
-
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -81,7 +85,7 @@ local isLockedOn = false
 local targetPlayer = nil
 local lockEnabled = false
 
--- Function to find the nearest player
+
 local function getNearestPlayer()
     local nearestPlayer = nil
     local shortestDistance = math.huge
@@ -100,7 +104,7 @@ local function getNearestPlayer()
     return nearestPlayer
 end
 
--- Function to toggle mouse lock on the nearest player
+
 local function toggleLockOnPlayer()
     if not lockEnabled then return end
 
@@ -115,13 +119,12 @@ local function toggleLockOnPlayer()
     end
 end
 
--- Update the camera to lock on the target player if enabled
+
 RunService.RenderStepped:Connect(function()
     if lockEnabled and isLockedOn and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
         if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
             isLockedOn = false
             targetPlayer = nil
-            print("Target player died")
             return
         end
         local targetPosition = targetPlayer.Character.Head.Position
@@ -130,7 +133,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Button to toggle the lock feature
+
 camSection:AddButton({
     Name = "[Q] to lock (head)",
     Callback = function()
@@ -143,7 +146,7 @@ camSection:AddButton({
     end
 })
 
--- Toggle lock with the 'Q' key
+
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.Q then
         toggleLockOnPlayer()
@@ -164,9 +167,9 @@ local noclipEnabled = false
 local infiniteJumpEnabled = false
 local espEnabled = false
 local teleportEnabled = false
-local teleportOffset = Vector3.new(0, 5, 0) -- Adjust to teleport above objects
+local teleportOffset = Vector3.new(0, 5, 0) 
 
--- Function to find the nearest player
+
 local function getNearestPlayer()
     local nearestPlayer = nil
     local shortestDistance = math.huge
@@ -185,7 +188,7 @@ local function getNearestPlayer()
     return nearestPlayer
 end
 
--- Function to toggle mouse lock on the nearest player
+
 local function toggleLockOnPlayer()
     if not lockEnabled then return end
 
@@ -200,7 +203,7 @@ local function toggleLockOnPlayer()
     end
 end
 
--- Function to smoothly move the camera towards the target
+
 local function smoothLockOnTarget(targetPosition)
     local cameraPosition = Camera.CFrame.Position
     local direction = (targetPosition - cameraPosition).Unit
@@ -208,13 +211,12 @@ local function smoothLockOnTarget(targetPosition)
     Camera.CFrame = CFrame.new(newCameraPosition, targetPosition)
 end
 
--- Update the camera to lock on the target player if enabled
+
 RunService.RenderStepped:Connect(function()
     if lockEnabled and isLockedOn and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
         if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
             isLockedOn = false
             targetPlayer = nil
-            print("Target player died")
             return
         end
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
@@ -223,12 +225,11 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Button to toggle the lock feature
+
 camSection:AddButton({
     Name = "[Q] to lock (torso)",
     Callback = function()
         lockEnabled = not lockEnabled
-        print("Lock feature " .. (lockEnabled and "enabled" or "disabled"))
         if not lockEnabled then
             isLockedOn = false
             targetPlayer = nil
@@ -236,7 +237,7 @@ camSection:AddButton({
     end
 })
 
--- Toggle lock with the 'Q' key
+
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.Q then
         toggleLockOnPlayer()
@@ -244,7 +245,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 end)
 
 
--- Improved function for No Clip
+
 local function toggleNoClip()
     noclipEnabled = not noclipEnabled
     local character = LocalPlayer.Character
@@ -272,9 +273,6 @@ end)
 local function toggleInfiniteJump()
     infiniteJumpEnabled = not infiniteJumpEnabled
     if infiniteJumpEnabled then
-        print("Infinite Jump Enabled")
-    else
-        print("Infinite Jump Disabled")
     end
 end
 
@@ -289,27 +287,24 @@ UserInputService.JumpRequest:Connect(function()
     end
 end)
 
--- Function to teleport to the mouse's target position
+
 local function teleportToMouse()
     if teleportEnabled then
         local mouseTarget = Mouse.Target
         local newPosition
 
         if mouseTarget then
-            -- If pointing at an object, teleport above it
             local targetPosition = mouseTarget.Position
             newPosition = Vector3.new(targetPosition.X, targetPosition.Y + teleportOffset.Y, targetPosition.Z)
         else
-            -- If not pointing at an object, teleport to the mouse's hit position
             newPosition = Mouse.Hit.p
         end
 
-        -- Set the character's position to the new position
         LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(newPosition))
     end
 end
 
--- Button to toggle the teleport feature
+
 playSection:AddButton({
     Name = "[E] to Teleport",
     Callback = function()
@@ -318,7 +313,6 @@ playSection:AddButton({
     end
 })
 
--- Listen for 'E' key press to teleport to the mouse position
 UserInputService.InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.E and teleportEnabled then
         teleportToMouse()
@@ -331,7 +325,6 @@ camSection:AddButton({
         fieldOfViewActive = not fieldOfViewActive
         
         if fieldOfViewActive then
-            -- Activate the FieldOfView script
             local uis = game:GetService("UserInputService")
             local camera = workspace.CurrentCamera
             
@@ -350,7 +343,6 @@ camSection:AddButton({
             uis.InputBegan:Connect(onInputBegan)
             uis.InputEnded:Connect(onInputEnded)
         else
-            -- Deactivate the FieldOfView script
             local uis = game:GetService("UserInputService")
             local connections = uis.InputBegan:GetConnections()
             for _, conn in ipairs(connections) do
@@ -360,8 +352,6 @@ camSection:AddButton({
             for _, conn in ipairs(connections) do
                 conn:Disconnect()
             end
-            
-            -- Reset the FieldOfView to default
             workspace.CurrentCamera.FieldOfView = 70
         end
     end
@@ -376,14 +366,14 @@ camSection:AddButton({
 local espEnabled = false
 local espFolder = Instance.new("Folder", game.CoreGui)
 espFolder.Name = "ESPFolder"
-local selectedColor = Color3.fromRGB(255, 0, 0)  -- Default ESP color is red
+local selectedColor = Color3.fromRGB(255, 0, 0) 
 
 local function createESP(player)
     local highlight = Instance.new("Highlight")
     highlight.Adornee = player.Character
     highlight.Parent = espFolder
-    highlight.FillTransparency = 1  -- Make the fill transparent
-    highlight.OutlineColor = selectedColor  -- Set the outline color
+    highlight.FillTransparency = 1  -- 
+    highlight.OutlineColor = selectedColor  
 end
 
 local function removeESP(player)
@@ -436,7 +426,7 @@ visSection:AddButton({
     Callback = toggleESP
 })
 
--- Update ESP color
+
 local function UpdateESPColor()
     if espEnabled then
         for _, item in ipairs(espFolder:GetChildren()) do
@@ -452,7 +442,7 @@ local function UpdateESPColor()
     end
 end
 
--- Create a drop-down menu
+
 visSection:AddDropdown({
     Name = "ESP Color",
     Options = {"Blue", "Green", "Yellow", "Red"},
@@ -520,17 +510,17 @@ local function toggleRolling()
             humanoid.PlatformStand = true
             if UsersInputService:GetFocusedTextBox() then return end
             if UsersInputService:IsKeyDown("W") then
-                ball.RotVelocity -= Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
-            end
+                   ball.RotVelocity -= Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
+                end
             if UsersInputService:IsKeyDown("A") then
-                ball.RotVelocity -= Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
-            end
+                   ball.RotVelocity -= Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
+                end
             if UsersInputService:IsKeyDown("S") then
-                ball.RotVelocity += Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
-            end
+                    ball.RotVelocity += Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
+                end
             if UsersInputService:IsKeyDown("D") then
-                ball.RotVelocity += Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
-            end
+                    ball.RotVelocity += Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
+                end
         end)
 
         UsersInputService.JumpRequest:Connect(function()
@@ -551,7 +541,7 @@ local function toggleRolling()
         Camera.CameraSubject = ball
     else
         ball.Shape = Enum.PartType.Block
-        ball.Size = Vector3.new(2, 2, 2) -- Default size, adjust if necessary
+        ball.Size = Vector3.new(2, 2, 2) 
         for i, v in ipairs(character:GetDescendants()) do
             if v:IsA("BasePart") then
                 v.CanCollide = true
@@ -583,7 +573,7 @@ end
 local function toggleSpin()
     spinning = not spinning
     if spinning then
-        spinSpeed = 400 -- Initial spin speed
+        spinSpeed = 400 
         startSpinning()
     else
         stopSpinning()
@@ -602,17 +592,15 @@ visSection:AddButton({
         fogRemoverActive = not fogRemoverActive
         
         if fogRemoverActive then
-            -- Remove the fog
             local lighting = game:GetService("Lighting")
             lighting.FogStart = math.huge
             lighting.FogEnd = math.huge
             lighting.FogColor = Color3.fromRGB(255, 255, 255)
         else
-            -- Restore the default fog settings
             local lighting = game:GetService("Lighting")
             lighting.FogStart = 0
             lighting.FogEnd = 10000
-            lighting.FogColor = Color3.fromRGB(128, 128, 128) -- Default fog color
+            lighting.FogColor = Color3.fromRGB(128, 128, 128) 
         end
     end
 })
@@ -648,25 +636,22 @@ visSection:AddButton({
 })
 
 
-local originalFOV = workspace.CurrentCamera.FieldOfView -- Store the original FOV
-
--- Define FOV options
+local originalFOV = workspace.CurrentCamera.FieldOfView 
 local FOVOptions = {"80", "90", "100", "110", "120"}
 
--- Add the dropdown to set FOV
 camSection:AddDropdown({
     Name = "FOV Setter",
-    Default = "70", -- Default FOV value
+    Default = "70", 
     Options = FOVOptions,
     Callback = function(Value)
-        local fovValue = tonumber(Value) -- Convert the selected value to a number
+        local fovValue = tonumber(Value) 
         if fovValue then
             workspace.CurrentCamera.FieldOfView = fovValue
         end
     end
 })
 
--- Add the button to reset FOV to original value
+
 camSection:AddButton({
     Name = "Reset FOV",
     Callback = function()
@@ -677,13 +662,11 @@ camSection:AddButton({
 
 local function toggleLighting()
     if isBright then
-        -- Revert to original lighting
         game.Lighting.Brightness = originalLighting.Brightness
         game.Lighting.Ambient = originalLighting.Ambient
         game.Lighting.OutdoorAmbient = originalLighting.OutdoorAmbient
         isBright = false
     else
-        -- Set bright lighting
         game.Lighting.Brightness = 2
         game.Lighting.Ambient = Color3.fromRGB(255, 255, 255)
         game.Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
@@ -733,28 +716,25 @@ playSection:AddTextbox({
 
 
 local originalGravity = workspace.Gravity
-local gravitySlider
 
--- Add a slider to adjust gravity
-gravitySlider = funTab:AddSlider({
-    Name = "Gravity",
-    Min = 0,
-    Max = 200,
-    Default = originalGravity,  -- Default value (Earth gravity, adjust as needed)
-    Increment = 0.1,
-    ValueName = "Gravity",
-    Callback = function(value)
-        workspace.Gravity = value
-    end    
+funTab:AddSlider({
+	Name = "Gravity",
+	Min = 0,
+	Max = 200,
+	Default = 196.2, 
+	Increment = 0.1,
+	ValueName = "Gravity",
+	Callback = function(value)
+		workspace.Gravity = value
+	end    
 })
 
--- Add a button to reset gravity
 funTab:AddButton({
-    Name = "Reset Gravity",
-    Callback = function()
-        workspace.Gravity = originalGravity
-        gravitySlider:Set(originalGravity)  -- Reset the slider to the original value
-    end
+	Name = "Reset Gravity",
+	Callback = function()
+		workspace.Gravity = originalGravity
+		GravitySlider:Set(originalGravity)  
+	end
 })
 
 
@@ -763,7 +743,6 @@ QEfly = true
 iyflyspeed = 1.4
 vehicleflyspeed = 1.4
 
--- Function to get the root part of a character
 local function getRoot(char)
     local rootPart = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
     return rootPart
@@ -818,7 +797,6 @@ function sFLY(vfly)
         end)
     end
     
-    -- Set animations to flying state
     local function setFlyingAnimation()
         local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
         if humanoid then
@@ -860,7 +838,7 @@ function sFLY(vfly)
     end)
     
     FLY()
-    setFlyingAnimation() -- Ensure animations are set to flying state
+    setFlyingAnimation() 
 end
 
 function NOFLY()
@@ -883,7 +861,6 @@ playSection:AddButton({
     end
 })
 
--- Bind the X key to toggle fly
 game:GetService("UserInputService").InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.X then
         if FLYING then
@@ -952,9 +929,6 @@ mageSection:AddButton({
     Callback = function()
         toggleState = not toggleState
         if toggleState then
-            -- Activate the script
-            print("toggled on!")
-
             
             local Services = setmetatable({}, {__index = function(Self, Index)
                 local NewService = game.GetService(game, Index)
@@ -1008,7 +982,6 @@ mageSection:AddButton({
                 end)
             end
 
-            -- // Event Listeners \\ --
             for i,v in ipairs(Services.Players:GetPlayers()) do
                 if v ~= LocalPlayer then
                     PlayerAdded(v)
@@ -1031,7 +1004,6 @@ mageSection:AddButton({
             end)
 
         else
-            -- Deactivate the script
             print("toggled off!")
             if toggleConnection then
                 toggleConnection:Disconnect()
@@ -1044,10 +1016,7 @@ mageSection:AddButton({
 mcuSection:AddButton({
     Name = "Set Day-time",
     Callback = function()
-        -- Get the Lighting service
         local lighting = game:GetService("Lighting")
-        
-        -- Set the time of day to 14 (2 PM), which is a common representation of daytime
         lighting.ClockTime = 14
     end
 })
@@ -1067,8 +1036,7 @@ mcuSection:AddButton({
 local function enableShaders()
     local lighting = game:GetService("Lighting")
     
-    -- Set a new Skybox ID
-    local skyboxId = "" -- Replace with your desired Skybox ID
+    local skyboxId = "" 
     local skybox = Instance.new("Sky")
     skybox.Name = "ShadersSkybox"
     skybox.SkyboxBk = "rbxassetid://" .. skyboxId
@@ -1079,7 +1047,6 @@ local function enableShaders()
     skybox.SkyboxUp = "rbxassetid://" .. skyboxId
     skybox.Parent = lighting
 
-    -- Create a new BloomEffect
     local bloomEffect = Instance.new("BloomEffect")
     bloomEffect.Name = "ShadersBloom"
     bloomEffect.Parent = lighting
@@ -1087,7 +1054,6 @@ local function enableShaders()
     bloomEffect.Threshold = 0.8
     bloomEffect.Size = 24
 
-    -- Create a new ColorCorrectionEffect
     local colorCorrection = Instance.new("ColorCorrectionEffect")
     colorCorrection.Name = "ShadersColorCorrection"
     colorCorrection.Parent = lighting
@@ -1095,20 +1061,19 @@ local function enableShaders()
     colorCorrection.Contrast = 0.2
     colorCorrection.Brightness = 0.2
 
-    -- Create a new BlurEffect
+
     local blurEffect = Instance.new("BlurEffect")
     blurEffect.Name = "ShadersBlur"
     blurEffect.Parent = lighting
-    blurEffect.Size = 5  -- Reduced blur effect
+    blurEffect.Size = 5  
 
     print("Shaders effect enabled")
 end
 
--- Function to disable shaders effect
 local function disableShaders()
     local lighting = game:GetService("Lighting")
 
-    -- Remove effects if they exist
+
     if lighting:FindFirstChild("ShadersBloom") then
         lighting.ShadersBloom:Destroy()
     end
@@ -1125,11 +1090,10 @@ local function disableShaders()
     print("Shaders effect disabled")
 end
 
--- Add a button to enable shaders
+
 mcuSection:AddButton({
     Name = "Shaders",
     Callback = function()
-        -- Toggle shaders effect on and off
         local lighting = game:GetService("Lighting")
         if not lighting:FindFirstChild("ShadersBloom") then
             enableShaders()
@@ -1142,7 +1106,6 @@ mcuSection:AddButton({
 local activated = false
 local runningCoroutine = nil
 
--- Function to start the loop
 local function startLoop()
     runningCoroutine = coroutine.create(function()
         while activated do
@@ -1153,17 +1116,15 @@ local function startLoop()
     coroutine.resume(runningCoroutine)
 end
 
--- Function to stop the loop
 local function stopLoop()
     activated = false
     if runningCoroutine then
-        -- Wait for the coroutine to finish
         repeat wait() until coroutine.status(runningCoroutine) == "dead"
         runningCoroutine = nil
     end
 end
 
--- Function to toggle activation
+
 local function toggleActivation()
     if activated then
         stopLoop()
@@ -1180,9 +1141,9 @@ mageSection:AddButton({
     end
 })
    
--- Define the script to execute
+
 local function executeScript()
-    local clone_transparency = 1 --Set Value How you want to fake body be transparenty.
+    local clone_transparency = 1 
 
 local Motors = {
     ["Left Hip"] = 0,
@@ -1380,11 +1341,6 @@ FakeCharacter.Name = Player.Name .. "_Fake"
 FakeCharacter.Parent = workspace
 local rig = animationplayer.LoadDummy(FakeCharacter)
 
--- Comment out the following lines to not load and play any animation
--- local track = rig:LoadAnimation("rbxassetid://17603135849")
--- coroutine.wrap(function()
---     track:Play()
--- end)()
 
 task.spawn(function()
     for i, LS in ipairs(FakeCharacter:GetChildren()) do
@@ -2460,9 +2416,7 @@ while event:Wait() do
         rightHip.C0 = rightHip.C0:Lerp(cf(1, -1, 0) * euler(0, 1.5707963267948966, 1.2217304763960306 + 0.17453292519943295 * sin((sine + 40) * 0.05)), 0.2) 
     end
 end
-    print("loading that mf...")
 
-end
 
 
 funTab:AddButton({
@@ -2474,9 +2428,9 @@ funTab:AddButton({
 local playerName = ""
 local reportActive = false
 local animationTrack = nil
-local speed = 10  -- Default speed
+local speed = 10  
 
--- Function to initialize and return the humanoid
+
 local function getHumanoid()
     local character = game.Players.LocalPlayer.Character
     if character then
@@ -2485,12 +2439,12 @@ local function getHumanoid()
     return nil
 end
 
--- Function to start the animation
+
 local function startAnimation()
     local humanoid = getHumanoid()
     if not humanoid then return end
 
-    -- Destroy previous animations and clothing
+  
     pcall(function()
         if humanoid.Parent:FindFirstChild("Pants") then
             humanoid.Parent.Pants:Destroy()
@@ -2507,7 +2461,7 @@ local function startAnimation()
     animationTrack:Play()
     animationTrack:AdjustSpeed(speed)
 
-    -- Keep updating the player's position while the functionality is active
+
     while humanoid.Parent and reportActive do
         wait()
         local targetPlayer = game.Players:FindFirstChild(playerName)
@@ -2516,23 +2470,21 @@ local function startAnimation()
         end
     end
 
-    -- Clean up after stopping
+
     if animationTrack then
         animationTrack:Stop()
     end
     reportActive = false
 end
 
--- Function to handle the report button logic
+
 local function handleReport()
     if reportActive then
-        -- Stop the functionality
         if animationTrack then
             animationTrack:Stop()
         end
         reportActive = false
     else
-        -- Start the functionality
         reportActive = true
         startAnimation()
     end
@@ -2564,6 +2516,188 @@ targSection:AddSlider({
         if animationTrack then
             animationTrack:AdjustSpeed(speed)
         end
+    end
+})
+
+targSection:AddButton({
+    Name = "fling gui",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local Player = Players.LocalPlayer
+
+        local ScreenGui = Instance.new("ScreenGui")
+        local Frame = Instance.new("Frame")
+        local TextBox = Instance.new("TextBox")
+        local TextButton = Instance.new("TextButton")
+
+        ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+        ScreenGui.ResetOnSpawn = false
+
+        Frame.Parent = ScreenGui
+        Frame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+        Frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+        Frame.Size = UDim2.new(0, 200, 0, 100)
+        Frame.Active = true
+        Frame.Draggable = true
+
+        TextBox.Parent = Frame
+        TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+        TextBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+        TextBox.Font = Enum.Font.SourceSans
+        TextBox.PlaceholderText = "Enter username"
+        TextBox.Text = ""
+        TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+        TextBox.TextSize = 14
+
+        TextButton.Parent = Frame
+        TextButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        TextButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+        TextButton.Size = UDim2.new(0.8, 0, 0.4, 0)
+        TextButton.Font = Enum.Font.SourceSans
+        TextButton.Text = "FLING!"
+        TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextButton.TextSize = 20
+
+        local function GetPlayer(Name)
+            Name = Name:lower()
+            for _, x in next, Players:GetPlayers() do
+                if x ~= Player then
+                    if x.Name:lower():match("^" .. Name) or x.DisplayName:lower():match("^" .. Name) then
+                        return x
+                    end
+                end
+            end
+            return nil
+        end
+
+        local function Message(_Title, _Text, Time)
+            game:GetService("StarterGui"):SetCore("SendNotification", {Title = _Title, Text = _Text, Duration = Time})
+        end
+
+        local function SkidFling(TargetPlayer)
+            local Character = Player.Character
+            local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+            local RootPart = Humanoid and Humanoid.RootPart
+
+            local TCharacter = TargetPlayer.Character
+            local THumanoid = TCharacter and TCharacter:FindFirstChildOfClass("Humanoid")
+            local TRootPart = THumanoid and THumanoid.RootPart
+            local THead = TCharacter and TCharacter:FindFirstChild("Head")
+            local Accessory = TCharacter and TCharacter:FindFirstChildOfClass("Accessory")
+            local Handle = Accessory and Accessory:FindFirstChild("Handle")
+
+            if Character and Humanoid and RootPart then
+                if RootPart.Velocity.Magnitude < 50 then
+                    getgenv().OldPos = RootPart.CFrame
+                end
+                if THumanoid and THumanoid.Sit then
+                    return Message("Error Occurred", "Target is sitting", 5)
+                end
+                if THead then
+                    workspace.CurrentCamera.CameraSubject = THead
+                elseif Handle then
+                    workspace.CurrentCamera.CameraSubject = Handle
+                else
+                    workspace.CurrentCamera.CameraSubject = THumanoid
+                end
+                if not TCharacter:FindFirstChildWhichIsA("BasePart") then
+                    return
+                end
+                
+                local function FPos(BasePart, Pos, Ang)
+                    RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
+                    Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
+                    RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+                    RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+                end
+                
+                local function SFBasePart(BasePart)
+                    local TimeToWait = 2
+                    local Time = tick()
+                    local Angle = 0
+
+                    repeat
+                        if RootPart and THumanoid then
+                            if BasePart.Velocity.Magnitude < 50 then
+                                Angle = Angle + 100
+
+                                FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(2.25, 1.5, -2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(-2.25, -1.5, 2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
+                                task.wait()
+                            else
+                                FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                                task.wait()
+                                
+                                FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, -TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5 ,0), CFrame.Angles(math.rad(-90), 0, 0))
+                                task.wait()
+
+                                FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                                task.wait()
+                            end
+                        else
+                            break
+                        end
+                    until BasePart.Velocity.Magnitude > 500 or BasePart.Parent ~= TargetPlayer.Character or TargetPlayer.Parent ~= Players or not TargetPlayer.Character == TCharacter or THumanoid.Sit or Humanoid.Health <= 0 or tick() > Time + TimeToWait
+                end
+                
+                workspace.FallenPartsDestroyHeight = 0/0
+                
+                local BV = Instance.new("BodyVelocity")
+                BV.Name = "EpixVel"
+                BV.Parent = RootPart
+                BV.Velocity = Vector3.new(0, 0, 0)
+                BV.MaxForce = Vector3.new(300000, 300000, 300000)
+
+                SkidFling(TargetPlayer)
+            end
+        end
+
+        TextButton.MouseButton1Click:Connect(function()
+            local PlayerName = TextBox.Text
+            local TargetPlayer = GetPlayer(PlayerName)
+            if TargetPlayer then
+                SkidFling(TargetPlayer)
+                Message("Success", "Flinging " .. PlayerName, 5)
+            else
+                Message("Error", "Could not find player", 5)
+            end
+        end)
     end
 })
 
