@@ -1,4 +1,4 @@
--- i made this open source because i fucking hate obfuscations
+-- i made this open source because i hate obfuscations
 -- enjoy this script also you can modify the source code as you want
 -- you can steal the source BUT please dont take this and claim it as yours thanks!
 
