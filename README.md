@@ -7,3 +7,7 @@ it has visual things graphical things and etc.
 also it includes aimlock and esp (for the people that have skill issue).
 and the best part yet, it has alot of futures for trolling.
 some parts of the script wasnt made by me so credit to the original creators.
+
+most executors can handle this script all you need to do is copy paste this loadstring into your executor or you can directly copy paste the source code in 
+
+loadstring(game:HttpGet(""))()
