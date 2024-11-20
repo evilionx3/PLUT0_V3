@@ -1,8 +1,3 @@
--- i made this open source because i hate obfuscations
--- enjoy this script also you can modify the source code as you want
--- you can steal the source BUT please dont take this and claim it as yours thanks!
-
-
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
 
@@ -71,7 +66,7 @@ infoTab:AddParagraph("informative","the float script is filter enabled (FE) mean
 infoTab:AddParagraph("compatibility","this script hub is universal meaning it can run on all games, also it can run on most executors but not all (mostly wont run on the shitty ones)")
 infoTab:AddParagraph("fun fact!","this script hub was made in 7 days also this script has 2.6k lines of code (for now)")
 infoTab:AddParagraph("informative","the Low GfX will remove all the decals,textures and etc. of youre game making it look shitty but boosts FPS.")
-infoTab:AddParagraph("informative","the fling gui was not made by me")
+
 ----------------------------------------------
 
 local Players = game:GetService("Players")
@@ -125,6 +120,7 @@ RunService.RenderStepped:Connect(function()
         if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
             isLockedOn = false
             targetPlayer = nil
+            print("Target player died")
             return
         end
         local targetPosition = targetPlayer.Character.Head.Position
@@ -217,6 +213,7 @@ RunService.RenderStepped:Connect(function()
         if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
             isLockedOn = false
             targetPlayer = nil
+            print("Target player died")
             return
         end
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
@@ -230,6 +227,7 @@ camSection:AddButton({
     Name = "[Q] to lock (torso)",
     Callback = function()
         lockEnabled = not lockEnabled
+        print("Lock feature " .. (lockEnabled and "enabled" or "disabled"))
         if not lockEnabled then
             isLockedOn = false
             targetPlayer = nil
@@ -269,10 +267,12 @@ UserInputService.InputBegan:Connect(function(input)
     end
 end)
 
--- Function for Infinite Jump
 local function toggleInfiniteJump()
     infiniteJumpEnabled = not infiniteJumpEnabled
     if infiniteJumpEnabled then
+        print("Infinite Jump Enabled")
+    else
+        print("Infinite Jump Disabled")
     end
 end
 
@@ -294,9 +294,11 @@ local function teleportToMouse()
         local newPosition
 
         if mouseTarget then
+
             local targetPosition = mouseTarget.Position
             newPosition = Vector3.new(targetPosition.X, targetPosition.Y + teleportOffset.Y, targetPosition.Z)
         else
+
             newPosition = Mouse.Hit.p
         end
 
@@ -313,6 +315,7 @@ playSection:AddButton({
     end
 })
 
+
 UserInputService.InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.E and teleportEnabled then
         teleportToMouse()
@@ -325,6 +328,7 @@ camSection:AddButton({
         fieldOfViewActive = not fieldOfViewActive
         
         if fieldOfViewActive then
+            
             local uis = game:GetService("UserInputService")
             local camera = workspace.CurrentCamera
             
@@ -343,6 +347,7 @@ camSection:AddButton({
             uis.InputBegan:Connect(onInputBegan)
             uis.InputEnded:Connect(onInputEnded)
         else
+          
             local uis = game:GetService("UserInputService")
             local connections = uis.InputBegan:GetConnections()
             for _, conn in ipairs(connections) do
@@ -352,6 +357,8 @@ camSection:AddButton({
             for _, conn in ipairs(connections) do
                 conn:Disconnect()
             end
+            
+          
             workspace.CurrentCamera.FieldOfView = 70
         end
     end
@@ -366,13 +373,13 @@ camSection:AddButton({
 local espEnabled = false
 local espFolder = Instance.new("Folder", game.CoreGui)
 espFolder.Name = "ESPFolder"
-local selectedColor = Color3.fromRGB(255, 0, 0) 
+local selectedColor = Color3.fromRGB(255, 0, 0)  
 
 local function createESP(player)
     local highlight = Instance.new("Highlight")
     highlight.Adornee = player.Character
     highlight.Parent = espFolder
-    highlight.FillTransparency = 1  -- 
+    highlight.FillTransparency = 1  
     highlight.OutlineColor = selectedColor  
 end
 
@@ -510,17 +517,17 @@ local function toggleRolling()
             humanoid.PlatformStand = true
             if UsersInputService:GetFocusedTextBox() then return end
             if UsersInputService:IsKeyDown("W") then
-                   ball.RotVelocity -= Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
-                end
+                ball.RotVelocity -= Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
+            end
             if UsersInputService:IsKeyDown("A") then
-                   ball.RotVelocity -= Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
-                end
+                ball.RotVelocity -= Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
+            end
             if UsersInputService:IsKeyDown("S") then
-                    ball.RotVelocity += Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
-                end
+                ball.RotVelocity += Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
+            end
             if UsersInputService:IsKeyDown("D") then
-                    ball.RotVelocity += Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
-                end
+                ball.RotVelocity += Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
+            end
         end)
 
         UsersInputService.JumpRequest:Connect(function()
@@ -541,7 +548,7 @@ local function toggleRolling()
         Camera.CameraSubject = ball
     else
         ball.Shape = Enum.PartType.Block
-        ball.Size = Vector3.new(2, 2, 2) 
+        ball.Size = Vector3.new(2, 2, 2) -- Default size, adjust if necessary
         for i, v in ipairs(character:GetDescendants()) do
             if v:IsA("BasePart") then
                 v.CanCollide = true
@@ -592,11 +599,13 @@ visSection:AddButton({
         fogRemoverActive = not fogRemoverActive
         
         if fogRemoverActive then
+           
             local lighting = game:GetService("Lighting")
             lighting.FogStart = math.huge
             lighting.FogEnd = math.huge
             lighting.FogColor = Color3.fromRGB(255, 255, 255)
         else
+            
             local lighting = game:GetService("Lighting")
             lighting.FogStart = 0
             lighting.FogEnd = 10000
@@ -637,7 +646,10 @@ visSection:AddButton({
 
 
 local originalFOV = workspace.CurrentCamera.FieldOfView 
+
+
 local FOVOptions = {"80", "90", "100", "110", "120"}
+
 
 camSection:AddDropdown({
     Name = "FOV Setter",
@@ -662,11 +674,13 @@ camSection:AddButton({
 
 local function toggleLighting()
     if isBright then
+        
         game.Lighting.Brightness = originalLighting.Brightness
         game.Lighting.Ambient = originalLighting.Ambient
         game.Lighting.OutdoorAmbient = originalLighting.OutdoorAmbient
         isBright = false
     else
+       
         game.Lighting.Brightness = 2
         game.Lighting.Ambient = Color3.fromRGB(255, 255, 255)
         game.Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
@@ -717,17 +731,19 @@ playSection:AddTextbox({
 
 local originalGravity = workspace.Gravity
 
+
 funTab:AddSlider({
 	Name = "Gravity",
 	Min = 0,
 	Max = 200,
-	Default = 196.2, 
+	Default = 196.2,  
 	Increment = 0.1,
 	ValueName = "Gravity",
 	Callback = function(value)
 		workspace.Gravity = value
 	end    
 })
+
 
 funTab:AddButton({
 	Name = "Reset Gravity",
@@ -743,12 +759,13 @@ QEfly = true
 iyflyspeed = 1.4
 vehicleflyspeed = 1.4
 
+
 local function getRoot(char)
     local rootPart = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
     return rootPart
 end
 
--- Fly function
+
 function sFLY(vfly)
     repeat wait() until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and getRoot(game.Players.LocalPlayer.Character) and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     repeat wait() until game.Players.LocalPlayer:GetMouse()
@@ -797,6 +814,7 @@ function sFLY(vfly)
         end)
     end
     
+
     local function setFlyingAnimation()
         local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
         if humanoid then
@@ -860,6 +878,7 @@ playSection:AddButton({
         end
     end
 })
+
 
 game:GetService("UserInputService").InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.X then
@@ -929,6 +948,7 @@ mageSection:AddButton({
     Callback = function()
         toggleState = not toggleState
         if toggleState then
+
             
             local Services = setmetatable({}, {__index = function(Self, Index)
                 local NewService = game.GetService(game, Index)
@@ -982,6 +1002,7 @@ mageSection:AddButton({
                 end)
             end
 
+            -- // Event Listeners \\ --
             for i,v in ipairs(Services.Players:GetPlayers()) do
                 if v ~= LocalPlayer then
                     PlayerAdded(v)
@@ -1004,7 +1025,6 @@ mageSection:AddButton({
             end)
 
         else
-            print("toggled off!")
             if toggleConnection then
                 toggleConnection:Disconnect()
             end
@@ -1016,6 +1036,7 @@ mageSection:AddButton({
 mcuSection:AddButton({
     Name = "Set Day-time",
     Callback = function()
+
         local lighting = game:GetService("Lighting")
         lighting.ClockTime = 14
     end
@@ -1036,6 +1057,7 @@ mcuSection:AddButton({
 local function enableShaders()
     local lighting = game:GetService("Lighting")
     
+    
     local skyboxId = "" 
     local skybox = Instance.new("Sky")
     skybox.Name = "ShadersSkybox"
@@ -1047,6 +1069,7 @@ local function enableShaders()
     skybox.SkyboxUp = "rbxassetid://" .. skyboxId
     skybox.Parent = lighting
 
+    
     local bloomEffect = Instance.new("BloomEffect")
     bloomEffect.Name = "ShadersBloom"
     bloomEffect.Parent = lighting
@@ -1054,6 +1077,7 @@ local function enableShaders()
     bloomEffect.Threshold = 0.8
     bloomEffect.Size = 24
 
+    
     local colorCorrection = Instance.new("ColorCorrectionEffect")
     colorCorrection.Name = "ShadersColorCorrection"
     colorCorrection.Parent = lighting
@@ -1061,7 +1085,7 @@ local function enableShaders()
     colorCorrection.Contrast = 0.2
     colorCorrection.Brightness = 0.2
 
-
+   
     local blurEffect = Instance.new("BlurEffect")
     blurEffect.Name = "ShadersBlur"
     blurEffect.Parent = lighting
@@ -1070,10 +1094,11 @@ local function enableShaders()
     print("Shaders effect enabled")
 end
 
+
 local function disableShaders()
     local lighting = game:GetService("Lighting")
 
-
+   
     if lighting:FindFirstChild("ShadersBloom") then
         lighting.ShadersBloom:Destroy()
     end
@@ -1106,6 +1131,7 @@ mcuSection:AddButton({
 local activated = false
 local runningCoroutine = nil
 
+
 local function startLoop()
     runningCoroutine = coroutine.create(function()
         while activated do
@@ -1116,9 +1142,10 @@ local function startLoop()
     coroutine.resume(runningCoroutine)
 end
 
+
 local function stopLoop()
     activated = false
-    if runningCoroutine then
+    if runningCoroutine then  
         repeat wait() until coroutine.status(runningCoroutine) == "dead"
         runningCoroutine = nil
     end
@@ -1141,9 +1168,9 @@ mageSection:AddButton({
     end
 })
    
-
+-- Define the script to execute
 local function executeScript()
-    local clone_transparency = 1 
+    local clone_transparency = 1 --Set Value How you want to fake body be transparenty.
 
 local Motors = {
     ["Left Hip"] = 0,
@@ -1341,6 +1368,11 @@ FakeCharacter.Name = Player.Name .. "_Fake"
 FakeCharacter.Parent = workspace
 local rig = animationplayer.LoadDummy(FakeCharacter)
 
+-- Comment out the following lines to not load and play any animation
+-- local track = rig:LoadAnimation("rbxassetid://17603135849")
+-- coroutine.wrap(function()
+--     track:Play()
+-- end)()
 
 task.spawn(function()
     for i, LS in ipairs(FakeCharacter:GetChildren()) do
@@ -2416,7 +2448,9 @@ while event:Wait() do
         rightHip.C0 = rightHip.C0:Lerp(cf(1, -1, 0) * euler(0, 1.5707963267948966, 1.2217304763960306 + 0.17453292519943295 * sin((sine + 40) * 0.05)), 0.2) 
     end
 end
+    print("loading that mf...")
 
+end
 
 
 funTab:AddButton({
@@ -2444,7 +2478,7 @@ local function startAnimation()
     local humanoid = getHumanoid()
     if not humanoid then return end
 
-  
+    
     pcall(function()
         if humanoid.Parent:FindFirstChild("Pants") then
             humanoid.Parent.Pants:Destroy()
@@ -2480,11 +2514,13 @@ end
 
 local function handleReport()
     if reportActive then
+       
         if animationTrack then
             animationTrack:Stop()
         end
         reportActive = false
     else
+
         reportActive = true
         startAnimation()
     end
