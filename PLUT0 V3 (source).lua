@@ -2737,9 +2737,6 @@ miscTab:AddButton({
     end
 })
 
-
-loadstring(game:HttpGet('https://raw.githubusercontent.com/vqmpjayZ/More-Scripts/main/Anti-Chat-Logger'))() -- anti chat logger NOT made by me
-
 function chat(msg)
 
     if game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService then
