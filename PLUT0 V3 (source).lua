@@ -3726,9 +3726,9 @@ pltargetTab:AddSlider({
     Default = 10,
     Increment = 1,
     Callback = function(value)
-        speed = value  -- Update the speed based on the slider value
+        speed = value  
         if bangActive and animationTrack then
-            animationTrack:AdjustSpeed(speed)  -- Adjust the speed of the animation
+            animationTrack:AdjustSpeed(speed)  
         end
     end
 })
