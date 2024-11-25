@@ -54,9 +54,9 @@ local targSection = funTab:AddSection({
     Name = "target"
 })
 
-local infoTab = Window:MakeTab({
-    Name = "Info",
-    Icon = "rbxassetid://7734053426",
+local pltargetTab = Window:MakeTab({
+    Name = "target",
+    Icon = "rbxassetid://7733960981",
     PremiumOnly = false
 })
 
@@ -689,40 +689,8 @@ visSection:AddButton({
 })
 
 
-playSection:AddTextbox({
-    Name = "TP to User",
-    Default = "",
-    TextDisappear = true,
-    Callback = function(Value)
-        local playerName = Value
-        local player = game.Players:FindFirstChild(playerName)
-
-        if player then
-            local character = game.Players.LocalPlayer.Character
-            if character and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                character:SetPrimaryPartCFrame(player.Character.HumanoidRootPart.CFrame)
-            else
-                OrionLib:MakeNotification({
-                    Name = "Error",
-                    Content = "Player's character or HumanoidRootPart not found.",
-                    Image = "rbxassetid://4483345998",
-                    Time = 5
-                })
-            end
-        else
-            OrionLib:MakeNotification({
-                Name = "Error",
-                Content = "Player not found.",
-                Image = "rbxassetid://4483345998",
-                Time = 5
-            })
-        end
-    end
-})
-
 
 local originalGravity = workspace.Gravity
-
 
 funTab:AddSlider({
 	Name = "Gravity",
@@ -2451,101 +2419,6 @@ funTab:AddButton({
 })
 
 
-local playerName = ""
-local reportActive = false
-local animationTrack = nil
-local speed = 10  
-
-
-local function getHumanoid()
-    local character = game.Players.LocalPlayer.Character
-    if character then
-        return character:FindFirstChildOfClass("Humanoid")
-    end
-    return nil
-end
-
-
-local function startAnimation()
-    local humanoid = getHumanoid()
-    if not humanoid then return end
-
-    
-    pcall(function()
-        if humanoid.Parent:FindFirstChild("Pants") then
-            humanoid.Parent.Pants:Destroy()
-        end
-        if humanoid.Parent:FindFirstChild("Shirt") then
-            humanoid.Parent.Shirt:Destroy()
-        end
-    end)
-
-    local inappropriateAnimation = Instance.new('Animation')
-    inappropriateAnimation.AnimationId = 'rbxassetid://148840371'
-
-    animationTrack = humanoid:LoadAnimation(inappropriateAnimation)
-    animationTrack:Play()
-    animationTrack:AdjustSpeed(speed)
-
-
-    while humanoid.Parent and reportActive do
-        wait()
-        local targetPlayer = game.Players:FindFirstChild(playerName)
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
-        end
-    end
-
-
-    if animationTrack then
-        animationTrack:Stop()
-    end
-    reportActive = false
-end
-
-
-local function handleReport()
-    if reportActive then
-       
-        if animationTrack then
-            animationTrack:Stop()
-        end
-        reportActive = false
-    else
-
-        reportActive = true
-        startAnimation()
-    end
-end
-
-targSection:AddTextbox({
-    Name = "Player to bang:",
-    Default = "",
-    TextDisappear = true,
-    Callback = function(value)
-        playerName = value
-    end
-})
-
-
-targSection:AddButton({
-    Name = "Start bang",
-    Callback = handleReport
-})
-
-targSection:AddSlider({
-    Name = "Bang speed",
-    Min = 10,
-    Max = 50,
-    Default = 10,
-    Increment = 1,
-    Callback = function(value)
-        speed = value
-        if animationTrack then
-            animationTrack:AdjustSpeed(speed)
-        end
-    end
-})
 
 targSection:AddButton({
     Name = "fling gui",
@@ -2736,6 +2609,7 @@ miscTab:AddButton({
         OrionLib:Destroy()
     end
 })
+
 
 function chat(msg)
 
@@ -3600,6 +3474,13 @@ end)
 
 ----------------------------------------------
 
+
+local infoTab = Window:MakeTab({
+    Name = "Info",
+    Icon = "rbxassetid://7734053426",
+    PremiumOnly = false
+})
+
 infoTab:AddParagraph("update log!","v3.01 i have added a few things to the fun tab, including bug fixes. and a chat-bypass and AI chatbot")
 infoTab:AddParagraph("WARNING","use esp and fly at youre own risk, in some games that have high end anti cheats the ESP and FLY is easly detected, so if you get banned i am not responsible, but in most games it will work perfectly fine.")
 infoTab:AddParagraph("informative","the float script is filter enabled (FE) meaning others can see it same with the bang, but the float script wasnt made by me, bang might not work in specific games and they will only work if youre avatar type is R6.")
@@ -3608,5 +3489,248 @@ infoTab:AddParagraph("fun fact!","this script hub was made in 7 days also this s
 infoTab:AddParagraph("informative","the Low GfX will remove all the decals,textures and etc. of youre game making it look shitty but boosts FPS.")
 
 ----------------------------------------------
+
+local selectedPlayer = nil
+local espEnabled = false
+local espBox = nil
+local bangActive = false
+local animationTrack = nil
+local speed = 10
+
+
+local function findClosestMatch(input)
+    local inputLower = input:lower()
+    local closestMatch = nil
+    local shortestDistance = math.huge
+
+    for _, player in pairs(game.Players:GetPlayers()) do
+        local playerNameLower = player.Name:lower()
+        local displayNameLower = player.DisplayName:lower()
+
+        if playerNameLower:find(inputLower) or displayNameLower:find(inputLower) then
+            local distance = math.min(
+                #playerNameLower - #inputLower,
+                #displayNameLower - #inputLower
+            )
+
+            if distance < shortestDistance then
+                closestMatch = player
+                shortestDistance = distance
+            end
+        end
+    end
+
+    return closestMatch
+end
+
+local function notify(title, text, duration)
+    OrionLib:MakeNotification({
+        Name = title,
+        Content = text,
+        Time = duration or 5
+    })
+end
+
+
+local highlightEnabled = false
+local highlightEffect = nil
+local espColor = Color3.fromRGB(255, 0, 255)  
+local espTransparency = 0.3  
+
+
+local function toggleESP()
+    if not selectedPlayer then
+        notify("Error", "No player selected!", 5)
+        return
+    end
+
+    highlightEnabled = not highlightEnabled
+
+    if highlightEnabled then
+        local target = selectedPlayer.Character
+        if target then
+            
+            highlightEffect = Instance.new("Highlight")
+            highlightEffect.Name = "PlayerHighlight"
+            highlightEffect.Adornee = target
+            highlightEffect.FillColor = espColor
+            highlightEffect.FillTransparency = espTransparency
+            highlightEffect.OutlineColor = Color3.fromRGB(255, 255, 255)  
+            highlightEffect.OutlineTransparency = 0  
+            highlightEffect.Parent = target
+        end
+    else
+        
+        if highlightEffect then
+            highlightEffect:Destroy()
+            highlightEffect = nil
+        end
+    end
+end
+
+
+
+local viewing = false
+local function toggleView()
+    if not selectedPlayer then
+        notify("Error", "No player selected!", 5)
+        return
+    end
+
+    viewing = not viewing
+    if viewing then
+        game.Workspace.CurrentCamera.CameraSubject = selectedPlayer.Character.Humanoid
+    else
+        game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+    end
+end
+
+
+local function teleportToPlayer()
+    if not selectedPlayer then
+        notify("Error", "No player selected!", 5)
+        return
+    end
+
+    local targetRoot = selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if targetRoot then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame
+    else
+        notify("Error", "Target not valid!", 5)
+    end
+end
+
+local function toggleBang()
+    if bangActive then
+        if animationTrack then
+            animationTrack:Stop()
+        end
+        bangActive = false
+    else
+        bangActive = true
+        local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return end
+
+   
+        pcall(function()
+            if humanoid.Parent:FindFirstChild("Pants") then
+                humanoid.Parent.Pants:Destroy()
+            end
+            if humanoid.Parent:FindFirstChild("Shirt") then
+                humanoid.Parent.Shirt:Destroy()
+            end
+        end)
+
+    
+        local inappropriateAnimation = Instance.new('Animation')
+        inappropriateAnimation.AnimationId = 'rbxassetid://148840371'
+
+        animationTrack = humanoid:LoadAnimation(inappropriateAnimation)
+        animationTrack:Play()
+        animationTrack:AdjustSpeed(speed)
+
+        spawn(function()
+            while bangActive do
+                wait()
+                if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local targetPart = selectedPlayer.Character.HumanoidRootPart
+                    local offsetPosition = targetPart.CFrame * CFrame.new(0, 0, 1.1)  
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = offsetPosition
+                else
+                    
+                    bangActive = false
+                end
+            end
+
+            
+            if animationTrack then
+                animationTrack:Stop()
+            end
+        end)
+    end
+end
+
+
+
+
+local function lockOn(targetInput)
+    local player = findClosestMatch(targetInput)
+    if player then
+        selectedPlayer = player
+        notify("Locked On", "Player " .. player.Name .. " has been locked on!", 5)
+    else
+        notify("Error", "Player either left or doesn't exist!", 5)
+    end
+end
+
+
+local function unlockPlayer()
+    if selectedPlayer then
+        notify("Unlocked", "Player " .. selectedPlayer.Name .. " has been unlocked!", 5)
+        selectedPlayer = nil
+    else
+        notify("Error", "No player is locked on!", 5)
+    end
+end
+
+
+pltargetTab:AddTextbox({
+    Name = "Player to Target:",
+    Default = "",
+    TextDisappear = true,
+    Callback = function(value)
+        lockOn(value)
+    end
+})
+
+
+pltargetTab:AddButton({
+    Name = "View",
+    Callback = function()
+        toggleView()
+    end
+})
+
+pltargetTab:AddButton({
+    Name = "GoTo",
+    Callback = function()
+        teleportToPlayer()
+    end
+})
+
+pltargetTab:AddButton({
+    Name = "Bang",
+    Callback = function()
+        toggleBang()
+    end
+})
+
+pltargetTab:AddButton({
+    Name = "ESP",
+    Callback = function()
+        toggleESP()
+    end
+})
+
+pltargetTab:AddButton({
+    Name = "remove Target",
+    Callback = function()
+        unlockPlayer()
+    end
+})
+
+pltargetTab:AddSlider({
+    Name = "Bang Speed",
+    Min = 10,
+    Max = 30,
+    Default = 10,
+    Increment = 1,
+    Callback = function(value)
+        speed = value  -- Update the speed based on the slider value
+        if bangActive and animationTrack then
+            animationTrack:AdjustSpeed(speed)  -- Adjust the speed of the animation
+        end
+    end
+})
 
 OrionLib:Init()
