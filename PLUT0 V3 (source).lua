@@ -1,3 +1,5 @@
+-- enjoy this open sourced this script
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
 
@@ -2634,7 +2636,7 @@ local selectedPlayer = nil
 local espEnabled = false
 local espBox = nil
 local bangActive = false
-local animationTrack = nil
+local BGanimationTrack = nil
 local speed = 10
 
 
@@ -2741,17 +2743,18 @@ local function teleportToPlayer()
 end
 
 local function toggleBang()
-    if bangActive then
-        if animationTrack then
-            animationTrack:Stop()
+    if nbangActive then
+        if BGanimationTrack then
+            BGanimationTrack:Stop()
         end
-        bangActive = false
+        nbangActive = false
     else
-        bangActive = true
+        
+        nbangActive = true
         local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
         if not humanoid then return end
 
-   
+        
         pcall(function()
             if humanoid.Parent:FindFirstChild("Pants") then
                 humanoid.Parent.Pants:Destroy()
@@ -2761,30 +2764,39 @@ local function toggleBang()
             end
         end)
 
-    
-        local inappropriateAnimation = Instance.new('Animation')
-        inappropriateAnimation.AnimationId = 'rbxassetid://148840371'
+        
+        local animationId
+        if humanoid.RigType == Enum.HumanoidRigType.R15 then
+            animationId = 'rbxassetid://5918726674' 
+        else
+            animationId = 'rbxassetid://148840371' 
+        end
 
-        animationTrack = humanoid:LoadAnimation(inappropriateAnimation)
-        animationTrack:Play()
-        animationTrack:AdjustSpeed(speed)
+        
+        local clapAnimation = Instance.new('Animation')
+        clapAnimation.AnimationId = animationId
 
+        BGanimationTrack = humanoid:LoadAnimation(clapAnimation)
+        BGanimationTrack:Play()
+        BGanimationTrack:AdjustSpeed(10)
+
+        
         spawn(function()
-            while bangActive do
+            while nbangActive do
                 wait()
                 if selectedPlayer and selectedPlayer.Character and selectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     local targetPart = selectedPlayer.Character.HumanoidRootPart
-                    local offsetPosition = targetPart.CFrame * CFrame.new(0, 0, 1.1)  
+                    local offsetPosition = targetPart.CFrame * CFrame.new(0, 0, 1.1) 
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = offsetPosition
                 else
-                    
-                    bangActive = false
+                   
+                    nbangActive = false
                 end
             end
 
-            
-            if animationTrack then
-                animationTrack:Stop()
+           
+            if BGanimationTrack then
+                BGanimationTrack:Stop()
             end
         end)
     end
@@ -2808,6 +2820,80 @@ local function unlockPlayer()
         selectedPlayer = nil
     else
         notify("Error", "No player is locked on!", 5)
+    end
+end
+
+
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local bangActive = false
+local bangAnimation
+local animationTrack
+local faceBangConnection
+
+
+local function isR15(character)
+    return character:FindFirstChild("UpperTorso") ~= nil
+end
+
+
+local function toggleFaceBang()
+    if bangActive then
+        
+        bangActive = false
+        if animationTrack then
+            animationTrack:Stop()
+            animationTrack:Destroy()
+        end
+        if faceBangConnection then
+            faceBangConnection:Disconnect()
+        end
+    else
+        
+        bangActive = true
+        local speaker = Players.LocalPlayer
+        local targetPlayer = selectedPlayer 
+        if not speaker.Character or not targetPlayer or not targetPlayer.Character then
+            return OrionLib:MakeNotification({
+                Name = "Face Bang",
+                Content = "Target player not selected or not found!",
+                Time = 5,
+            })
+        end
+
+
+        local humanoid = speaker.Character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return end
+
+        local animationId = isR15(speaker.Character) and "rbxassetid://5918726674" or "rbxassetid://148840371"
+        bangAnimation = Instance.new("Animation")
+        bangAnimation.AnimationId = animationId
+        animationTrack = humanoid:LoadAnimation(bangAnimation)
+        animationTrack:Play()
+        animationTrack:AdjustSpeed(10)
+
+        faceBangConnection = RunService.Heartbeat:Connect(function()
+            if not bangActive then return end
+            local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local targetHead = targetPlayer.Character:FindFirstChild("Head") or targetPlayer.Character:FindFirstChild("FaceFrontAttachment")
+            local speakerRoot = speaker.Character:FindFirstChild("HumanoidRootPart")
+
+            if targetRoot and targetHead and speakerRoot then
+                local offset = targetHead.CFrame.LookVector * 1 + Vector3.new(0, 0, 0.4)  
+                local targetLookAt = (targetHead.Position - speakerRoot.Position).unit
+                speakerRoot.CFrame = CFrame.new(targetHead.Position + offset, targetHead.Position)
+            else
+                bangActive = false
+                faceBangConnection:Disconnect()
+                return OrionLib:MakeNotification({
+                    Name = "Face Bang",
+                    Content = "Target is missing Head or FaceFrontAttachment!",
+                    Time = 5,
+                })
+            end
+        end)
     end
 end
 
@@ -2844,6 +2930,13 @@ pltargetTab:AddButton({
 })
 
 pltargetTab:AddButton({
+    Name = "FaceBang",
+    Callback = function()
+        toggleFaceBang()
+    end
+})
+
+pltargetTab:AddButton({
     Name = "ESP",
     Callback = function()
         toggleESP()
@@ -2861,15 +2954,18 @@ pltargetTab:AddSlider({
     Name = "Bang Speed",
     Min = 10,
     Max = 30,
-    Default = 10,
-    Increment = 1,
-    Callback = function(value)
-        speed = value  
+    Default = 10,  
+    Increment = 0.5,
+    Callback = function(speed)
         if bangActive and animationTrack then
-            animationTrack:AdjustSpeed(speed)  
+            animationTrack:AdjustSpeed(speed)
+        end
+        if nbangActive and BGanimationTrack then
+            BGanimationTrack:AdjustSpeed(speed)
         end
     end
 })
+
 
 playSection:AddButton({
     Name = "enable-chat-Tabs",
@@ -3421,7 +3517,7 @@ playSection:AddButton({
             Callback = function(val)
                 if webhook == "" then
                     OrionLib:MakeNotification({
-                        Name = "Ops.",
+                        Name = "Oops.",
                         Content = "Looks like you didn't enter any webhook url!",
                         Image = "rbxassetid://4483345998",
                         Time = 5
