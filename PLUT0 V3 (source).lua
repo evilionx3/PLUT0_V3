@@ -1,4 +1,4 @@
--- enjoy this open sourced this script
+-- enjoy this open sourced script
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
