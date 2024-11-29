@@ -3832,5 +3832,70 @@ playSection:AddButton({
     end
 })
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+
+if not ReplicatedStorage:FindFirstChild("juisdfj0i32i0eidsuf0iok") then
+    local detection = Instance.new("Decal")
+    detection.Name = "juisdfj0i32i0eidsuf0iok"
+    detection.Parent = ReplicatedStorage
+end
+
+local hiddenfling = false
+local flingThread
+
+
+local function fling()
+    local lp = Players.LocalPlayer
+    local c, hrp, vel, movel = nil, nil, nil, 0.1
+
+    while hiddenfling do
+        RunService.Heartbeat:Wait()
+        c = lp.Character
+        hrp = c and c:FindFirstChild("HumanoidRootPart")
+
+        if hrp then
+            vel = hrp.Velocity
+            hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+            RunService.RenderStepped:Wait()
+            hrp.Velocity = vel
+            RunService.Stepped:Wait()
+            hrp.Velocity = vel + Vector3.new(0, movel, 0)
+            movel = -movel
+        end
+    end
+end
+
+
+targSection:AddButton({
+    Name = "Touch Fling",
+    Callback = function()
+        hiddenfling = not hiddenfling
+
+        if hiddenfling then
+            
+            OrionLib:MakeNotification({
+                Name = "Fling Toggle On",
+                Content = "Touch Fling is now ON!",
+                Image = "rbxassetid://4452802356", 
+                Time = 5
+            })
+          
+            flingThread = coroutine.create(fling)
+            coroutine.resume(flingThread)
+        else
+           
+            OrionLib:MakeNotification({
+                Name = "Fling Toggle Off",
+                Content = "Touch Fling is now OFF!",
+                Image = "rbxassetid://4452802356", 
+                Time = 5
+            })
+            hiddenfling = false  
+        end
+    end
+})
 
 OrionLib:Init()
