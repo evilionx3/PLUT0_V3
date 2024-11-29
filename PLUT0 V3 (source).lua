@@ -1,4 +1,5 @@
--- enjoy this open sourced script
+-- enjoy this open sourced this script
+-- i hate obfuscators
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
@@ -717,18 +718,18 @@ funTab:AddButton({
 
 
 FLYING = false
-QEfly = true
+QEfly = false
 iyflyspeed = 1.4
 vehicleflyspeed = 1.4
-
+flyEnabled = false 
 
 local function getRoot(char)
     local rootPart = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
     return rootPart
 end
 
-
 function sFLY(vfly)
+    if not flyEnabled then return end 
     repeat wait() until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and getRoot(game.Players.LocalPlayer.Character) and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     repeat wait() until game.Players.LocalPlayer:GetMouse()
 
@@ -755,7 +756,7 @@ function sFLY(vfly)
                 elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
                     SPEED = 0
                 end
-                if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+                if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E ~= 0) then
                     BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
                     lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
                 elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
@@ -775,7 +776,6 @@ function sFLY(vfly)
             end
         end)
     end
-    
 
     local function setFlyingAnimation()
         local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
@@ -783,7 +783,7 @@ function sFLY(vfly)
             humanoid.PlatformStand = true
         end
     end
-    
+
     game.Players.LocalPlayer:GetMouse().KeyDown:Connect(function(KEY)
         if KEY:lower() == 'w' then
             CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
@@ -800,7 +800,7 @@ function sFLY(vfly)
         end
         pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
     end)
-    
+
     game.Players.LocalPlayer:GetMouse().KeyUp:Connect(function(KEY)
         if KEY:lower() == 'w' then
             CONTROL.F = 0
@@ -816,7 +816,7 @@ function sFLY(vfly)
             CONTROL.E = 0
         end
     end)
-    
+
     FLY()
     setFlyingAnimation() 
 end
@@ -832,22 +832,22 @@ end
 playSection:AddButton({
     Name = "[X] to fly",
     Default = false,
-    Callback = function(state)
-        if state then
-            sFLY()
-        else
-            NOFLY()
+    Callback = function()
+        flyEnabled = not flyEnabled 
+        if not flyEnabled then
+            NOFLY() 
         end
     end
 })
 
-
 game:GetService("UserInputService").InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.X then
-        if FLYING then
-            NOFLY()
-        else
-            sFLY()
+        if flyEnabled then 
+            if FLYING then
+                NOFLY()
+            else
+                sFLY()
+            end
         end
     end
 end)
