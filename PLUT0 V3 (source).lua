@@ -237,30 +237,60 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = game.Players.LocalPlayer
+local noclipEnabled = false
 
-
-local function toggleNoClip()
-    noclipEnabled = not noclipEnabled
+-- Function to set collision state for all character parts
+local function setNoClipState(enabled)
     local character = LocalPlayer.Character
     if character then
         for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = not noclipEnabled
+            if part:IsA("BasePart") and part.CanCollide ~= not enabled then
+                part.CanCollide = not enabled -- Only update if necessary
             end
         end
     end
 end
 
+-- Monitor the character and reapply No-Clip if needed
+local function monitorCharacter()
+    while noclipEnabled do
+        local character = LocalPlayer.Character
+        if character then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false -- Fix immediately if it gets reset
+                end
+            end
+        end
+        task.wait(0.2)
+    end
+end
+
+-- Toggle No-Clip
+local function toggleNoClip()
+    noclipEnabled = not noclipEnabled
+    setNoClipState(noclipEnabled)
+    if noclipEnabled then
+        task.spawn(monitorCharacter) 
+    end
+end
+
+
+LocalPlayer.CharacterAdded:Connect(function()
+    if noclipEnabled then
+        task.wait(0.5) 
+        setNoClipState(noclipEnabled)
+        task.spawn(monitorCharacter) 
+    end
+end)
+
+
 playSection:AddButton({
     Name = "No Clip",
     Callback = toggleNoClip
 })
-
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.N then
-        toggleNoClip()
-    end
-end)
 
 local function toggleInfiniteJump()
     infiniteJumpEnabled = not infiniteJumpEnabled
@@ -852,6 +882,19 @@ game:GetService("UserInputService").InputBegan:Connect(function(input)
     end
 end)
 
+
+playSection:AddSlider({
+    Name = "Fly Speed",
+    Min = 1.4,
+    Max = 20,
+    Default = 1.4,
+    Increment = 0.5,
+    ValueName = "Speed",
+    Callback = function(value)
+        iyflyspeed = value
+        vehicleflyspeed = value
+    end
+})
   
 playSection:AddSlider({
     Name = "Speed Power",
