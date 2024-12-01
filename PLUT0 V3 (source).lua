@@ -313,39 +313,31 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 
-local function teleportToMouse()
-    if teleportEnabled then
-        local mouseTarget = Mouse.Target
-        local newPosition
+local teleportEnabled = false
+local teleportOffset = 5 
 
-        if mouseTarget then
 
-            local targetPosition = mouseTarget.Position
-            newPosition = Vector3.new(targetPosition.X, targetPosition.Y + teleportOffset.Y, targetPosition.Z)
-        else
-
-            newPosition = Mouse.Hit.p
-        end
-
-        LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(newPosition))
-    end
+local function toggleTeleport()
+    teleportEnabled = not teleportEnabled
 end
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end 
+    if input.KeyCode == Enum.KeyCode.E and teleportEnabled then
+        local mouse = game.Players.LocalPlayer:GetMouse()
+        if mouse.Target then
+            game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + teleportOffset, mouse.Hit.z)
+        end
+    end
+end)
 
 
 playSection:AddButton({
     Name = "[E] to Teleport",
     Callback = function()
-        teleportEnabled = not teleportEnabled
-        print("Teleport feature " .. (teleportEnabled and "enabled" or "disabled"))
+        toggleTeleport()
     end
 })
-
-
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.E and teleportEnabled then
-        teleportToMouse()
-    end
-end)
 
 camSection:AddButton({
     Name = "[V] to zoom",
