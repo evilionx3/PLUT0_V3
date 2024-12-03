@@ -1,4 +1,4 @@
--- enjoy this open sourced this script
+-- enjoy this open sourced script
 -- i hate obfuscators
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
@@ -36,7 +36,7 @@ local camSection = mainTab:AddSection({
 })
 
 local visSection = mainTab:AddSection({
-    Name = "Visuals"
+    Name = "ESP"
 })
 
 local miscTab = Window:MakeTab({
@@ -241,7 +241,7 @@ local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = game.Players.LocalPlayer
 local noclipEnabled = false
 
--- Function to set collision state for all character parts
+
 local function setNoClipState(enabled)
     local character = LocalPlayer.Character
     if character then
@@ -253,14 +253,14 @@ local function setNoClipState(enabled)
     end
 end
 
--- Monitor the character and reapply No-Clip if needed
+
 local function monitorCharacter()
     while noclipEnabled do
         local character = LocalPlayer.Character
         if character then
             for _, part in pairs(character:GetDescendants()) do
                 if part:IsA("BasePart") and part.CanCollide then
-                    part.CanCollide = false -- Fix immediately if it gets reset
+                    part.CanCollide = false 
                 end
             end
         end
@@ -268,7 +268,7 @@ local function monitorCharacter()
     end
 end
 
--- Toggle No-Clip
+
 local function toggleNoClip()
     noclipEnabled = not noclipEnabled
     setNoClipState(noclipEnabled)
@@ -446,23 +446,175 @@ for _, player in pairs(game.Players:GetPlayers()) do
 end
 
 visSection:AddButton({
-    Name = "ESP (highlight)",
+    Name = "ESP (outline)",
     Callback = toggleESP
 })
 
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+
+local nameESPEnabled = false
+local tracerESPEnabled = false
+
+
+local nameESPObjects = {}
+local tracerLines = {}
+
+
+local function createNameESP(character)
+    local head = character:FindFirstChild("Head")
+    if not head then return end
+
+    if nameESPObjects[character] then return end
+
+    local billboard = Instance.new("BillboardGui", head)
+    billboard.Name = "NameESP"
+    billboard.Size = UDim2.new(0, 80, 0, 40) 
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+
+    local textLabel = Instance.new("TextLabel", billboard)
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.Text = character.Name
+    textLabel.TextColor3 = Color3.new(0, 1, 0)
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.Code 
+    textLabel.BackgroundTransparency = 1
+
+    nameESPObjects[character] = billboard
+end
+
+
+local function removeNameESP(character)
+    if nameESPObjects[character] then
+        nameESPObjects[character]:Destroy()
+        nameESPObjects[character] = nil
+    end
+end
+
+local function createTracer(playerCharacter)
+    local line = Drawing.new("Line")
+    line.Color = Color3.new(1, 1, 1)
+    line.Thickness = 1
+    line.Transparency = 1
+    tracerLines[playerCharacter] = line
+end
+
+
+local function removeTracer(playerCharacter)
+    if tracerLines[playerCharacter] then
+        tracerLines[playerCharacter]:Remove()
+        tracerLines[playerCharacter] = nil
+    end
+end
+
+
+local function updateTracers()
+    for playerCharacter, line in pairs(tracerLines) do
+        if not playerCharacter:FindFirstChild("HumanoidRootPart") then
+            line.Visible = false
+        else
+            local rootPosition = playerCharacter.HumanoidRootPart.Position
+            local screenPos, onScreen = camera:WorldToViewportPoint(rootPosition)
+            if onScreen then
+                local origin = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2) 
+                line.From = origin
+                line.To = Vector2.new(screenPos.X, screenPos.Y)
+                line.Visible = true
+            else
+                line.Visible = false
+            end
+        end
+    end
+end
+
+
+local function toggleNameESP()
+    nameESPEnabled = not nameESPEnabled
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= player then
+            local character = v.Character or v.CharacterAdded:Wait()
+            if nameESPEnabled then
+                createNameESP(character)
+            else
+                removeNameESP(character)
+            end
+        end
+    end
+end
+
+local function toggleTracerESP()
+    tracerESPEnabled = not tracerESPEnabled
+    if tracerESPEnabled then
+        RunService.RenderStepped:Connect(updateTracers)
+        for _, v in pairs(Players:GetPlayers()) do
+            if v ~= player then
+                local character = v.Character or v.CharacterAdded:Wait()
+                createTracer(character)
+            end
+        end
+    else
+        for _, line in pairs(tracerLines) do
+            line:Remove()
+        end
+        tracerLines = {}
+    end
+end
+
+
+Players.PlayerAdded:Connect(function(newPlayer)
+    newPlayer.CharacterAdded:Connect(function(character)
+        if nameESPEnabled then
+            createNameESP(character)
+        end
+        if tracerESPEnabled then
+            createTracer(character)
+        end
+    end)
+end)
+
+Players.PlayerRemoving:Connect(function(removingPlayer)
+    if removingPlayer.Character then
+        removeNameESP(removingPlayer.Character)
+        removeTracer(removingPlayer.Character)
+    end
+end)
+
+
+visSection:AddButton({
+    Name = "ESP (name)",
+    Callback = toggleNameESP
+})
+
+visSection:AddButton({
+    Name = "ESP (tracer)",
+    Callback = toggleTracerESP
+})
+
+
 local function UpdateESPColor()
+    for _, billboard in pairs(nameESPObjects) do
+        if billboard and billboard:FindFirstChild("TextLabel") then
+            billboard.TextLabel.TextColor3 = selectedColor
+        end
+    end
+
+    for _, tracer in pairs(tracerLines) do
+        if tracer then
+            tracer.Color = selectedColor
+        end
+    end
+
     if espEnabled then
         for _, item in ipairs(espFolder:GetChildren()) do
             item.OutlineColor = selectedColor
+        
         end
-    else
-        OrionLib:MakeNotification({
-            Name = "ESP Status",
-            Content = "Enable ESP first",
-            Image = "rbxassetid://4483345998",
-            Time = 5
-        })
     end
 end
 
@@ -610,7 +762,7 @@ funTab:AddButton({
 })
 
 
-visSection:AddButton({
+mcuSection:AddButton({
     Name = "Fog Remover",
     Callback = function()
         fogRemoverActive = not fogRemoverActive
@@ -632,7 +784,7 @@ visSection:AddButton({
 })
 
 
-visSection:AddButton({
+mcuSection:AddButton({
     Name = "Low GFX",
     Callback = function()
         local decalsyeeted = true
@@ -706,7 +858,7 @@ local function toggleLighting()
 end
 
 
-visSection:AddButton({
+mcuSection:AddButton({
     Name = "full bright",
     Callback = function()
         toggleLighting()
@@ -2659,10 +2811,10 @@ local infoTab = Window:MakeTab({
 })
 
 infoTab:AddParagraph("update log!","v3.01 i have added a few things to the fun tab, including bug fixes. and a chat-bypass and AI chatbot")
-infoTab:AddParagraph("WARNING","use esp and fly at youre own risk, in some games that have high end anti cheats the ESP and FLY is easly detected, so if you get banned i am not responsible, but in most games it will work perfectly fine.")
-infoTab:AddParagraph("informative","the float script is filter enabled (FE) meaning others can see it same with the bang, but the float script wasnt made by me, bang might not work in specific games and they will only work if youre avatar type is R6.")
+infoTab:AddParagraph("WARNING","use esp and fly at your own risk, in some games that have high end anti cheats the outline and FLY is easly detected, so if you get banned i am not responsible, but in most games it will work perfectly fine.")
+infoTab:AddParagraph("informative","the float script is filter enabled (FE) meaning others can see it same with the bang, but the float script wasnt made by me.")
 infoTab:AddParagraph("compatibility","this script hub is universal meaning it can run on all games, also it can run on most executors but not all (mostly wont run on the shitty ones)")
-infoTab:AddParagraph("fun fact!","this script hub was made in 7 days also this script has 3.6k lines of code (for now)")
+infoTab:AddParagraph("fun fact!","this script hub was made in 14 days also this script has 4k lines of code (for now)")
 infoTab:AddParagraph("informative","the Low GfX will remove all the decals,textures and etc. of youre game making it look shitty but boosts FPS.")
 
 ----------------------------------------------
