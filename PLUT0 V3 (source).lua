@@ -1,5 +1,16 @@
--- enjoy this open sourced script
--- i hate obfuscators
+--[[
+__________ __          __   _______          ________  
+\______   \  |  __ ___/  |_ \   _  \   ___  _\_____  \ 
+ |     ___/  | |  |  \   __\/  /_\  \  \  \/ / _(__  < 
+ |    |   |  |_|  |  /|  |  \  \_/   \  \   / /       \
+ |____|   |____/____/ |__|   \_____  /   \_/ /______  /
+                                   \/               \/ 
+  enjoy this script and its source code.
+
+  i hate obfuscators.
+
+--]]
+
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
@@ -247,7 +258,7 @@ local function setNoClipState(enabled)
     if character then
         for _, part in pairs(character:GetDescendants()) do
             if part:IsA("BasePart") and part.CanCollide ~= not enabled then
-                part.CanCollide = not enabled -- Only update if necessary
+                part.CanCollide = not enabled 
             end
         end
     end
@@ -2805,17 +2816,61 @@ miscTab:AddButton({
 
 
 local infoTab = Window:MakeTab({
-    Name = "Info",
+    Name = "externals",
     Icon = "rbxassetid://7734053426",
     PremiumOnly = false
 })
 
-infoTab:AddParagraph("update log!","v3.01 i have added a few things to the fun tab, including bug fixes. and a chat-bypass and AI chatbot")
-infoTab:AddParagraph("WARNING","use esp and fly at your own risk, in some games that have high end anti cheats the outline and FLY is easly detected, so if you get banned i am not responsible, but in most games it will work perfectly fine.")
-infoTab:AddParagraph("informative","the float script is filter enabled (FE) meaning others can see it same with the bang, but the float script wasnt made by me.")
-infoTab:AddParagraph("compatibility","this script hub is universal meaning it can run on all games, also it can run on most executors but not all (mostly wont run on the shitty ones)")
-infoTab:AddParagraph("fun fact!","this script hub was made in 14 days also this script has 4k lines of code (for now)")
-infoTab:AddParagraph("informative","the Low GfX will remove all the decals,textures and etc. of youre game making it look shitty but boosts FPS.")
+infoTab:AddButton({
+	Name = "Infinite Yield",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+	end
+})
+
+infoTab:AddButton({
+	Name = "Nameless Admin",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
+	end
+})
+
+infoTab:AddButton({
+	Name = "Dex Explorer 2.0 (Raspberry Pi)",
+	Callback = function()
+		loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt"))()
+	end
+})
+
+
+infoTab:AddButton({
+	Name = "Audio Logger",
+	Callback = function()
+		loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
+	end
+})
+
+infoTab:AddButton({
+	Name = "DarkDex 4.0 (Moon & Courtney)",
+	Callback = function()
+		loadstring(game:HttpGet("https://gist.githubusercontent.com/DinosaurXxX/b757fe011e7e600c0873f967fe427dc2/raw/ee5324771f017073fc30e640323ac2a9b3bfc550/dark%2520dex%2520v4"))()
+	end
+})
+
+infoTab:AddButton({
+	Name = "DarkDex 4.0 (Moon & Courtney)",
+	Callback = function()
+		loadstring(game:HttpGet("https://gist.githubusercontent.com/DinosaurXxX/b757fe011e7e600c0873f967fe427dc2/raw/ee5324771f017073fc30e640323ac2a9b3bfc550/dark%2520dex%2520v4"))()
+	end
+})
+
+infoTab:AddButton({
+	Name = "System Broken",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/script"))()
+	end
+})
+
 
 ----------------------------------------------
 
@@ -4066,7 +4121,7 @@ targSection:AddButton({
             OrionLib:MakeNotification({
                 Name = "Fling Toggle On",
                 Content = "Touch Fling is now ON!",
-                Image = "rbxassetid://4452802356", 
+                Image = "rbxassetid://7734063416", 
                 Time = 5
             })
           
@@ -4077,7 +4132,7 @@ targSection:AddButton({
             OrionLib:MakeNotification({
                 Name = "Fling Toggle Off",
                 Content = "Touch Fling is now OFF!",
-                Image = "rbxassetid://4452802356", 
+                Image = "rbxassetid://7734063416", 
                 Time = 5
             })
             hiddenfling = false  
