@@ -64,9 +64,10 @@ local mcuSection = miscTab:AddSection({
     Name = "Visuals"
 })
 
-local targSection = funTab:AddSection({
-    Name = "target"
+local tpSection = mainTab:AddSection({
+    Name = "teleport"
 })
+
 
 local pltargetTab = Window:MakeTab({
     Name = "target",
@@ -306,9 +307,6 @@ playSection:AddButton({
 local function toggleInfiniteJump()
     infiniteJumpEnabled = not infiniteJumpEnabled
     if infiniteJumpEnabled then
-        print("Infinite Jump Enabled")
-    else
-        print("Infinite Jump Disabled")
     end
 end
 
@@ -1214,77 +1212,67 @@ mcuSection:AddButton({
 })
 
 
-local function enableShaders()
-    local lighting = game:GetService("Lighting")
-    
-    
-    local skyboxId = "" 
-    local skybox = Instance.new("Sky")
-    skybox.Name = "ShadersSkybox"
-    skybox.SkyboxBk = "rbxassetid://" .. skyboxId
-    skybox.SkyboxDn = "rbxassetid://" .. skyboxId
-    skybox.SkyboxFt = "rbxassetid://" .. skyboxId
-    skybox.SkyboxLf = "rbxassetid://" .. skyboxId
-    skybox.SkyboxRt = "rbxassetid://" .. skyboxId
-    skybox.SkyboxUp = "rbxassetid://" .. skyboxId
-    skybox.Parent = lighting
+local isLightingEnabled = false  
 
-    
-    local bloomEffect = Instance.new("BloomEffect")
-    bloomEffect.Name = "ShadersBloom"
-    bloomEffect.Parent = lighting
-    bloomEffect.Intensity = 0.5
-    bloomEffect.Threshold = 0.8
-    bloomEffect.Size = 24
+local function ToggleLightingEffects()
+    local Light = game.Lighting  
 
-    
-    local colorCorrection = Instance.new("ColorCorrectionEffect")
-    colorCorrection.Name = "ShadersColorCorrection"
-    colorCorrection.Parent = lighting
-    colorCorrection.Saturation = 0.5
-    colorCorrection.Contrast = 0.2
-    colorCorrection.Brightness = 0.2
+    if isLightingEnabled then
 
-   
-    local blurEffect = Instance.new("BlurEffect")
-    blurEffect.Name = "ShadersBlur"
-    blurEffect.Parent = lighting
-    blurEffect.Size = 5  
+        for _, v in pairs(Light:GetChildren()) do
+            v:Destroy()
+        end
+        Light.Brightness = 2
+        Light.ExposureCompensation = 0
+    else
 
-    print("Shaders effect enabled")
+        local Sky = Instance.new("Sky")
+        local Bloom = Instance.new("BloomEffect")
+        local Blur = Instance.new("BlurEffect")
+        local ColorC = Instance.new("ColorCorrectionEffect")
+        local SunRays = Instance.new("SunRaysEffect")
+
+        Light.Brightness = 2.25
+        Light.ExposureCompensation = 0.1
+        Light.ClockTime = 17.55
+
+        Sky.SkyboxBk = "http://www.roblox.com/asset/?id=144933338"
+        Sky.SkyboxDn = "http://www.roblox.com/asset/?id=144931530"
+        Sky.SkyboxFt = "http://www.roblox.com/asset/?id=144933262"
+        Sky.SkyboxLf = "http://www.roblox.com/asset/?id=144933244"
+        Sky.SkyboxRt = "http://www.roblox.com/asset/?id=144933299"
+        Sky.SkyboxUp = "http://www.roblox.com/asset/?id=144931564"
+        Sky.StarCount = 5000
+        Sky.SunAngularSize = 5
+        Sky.Parent = Light
+
+        Bloom.Intensity = 0.3
+        Bloom.Size = 10
+        Bloom.Threshold = 0.8
+        Bloom.Parent = Light
+
+        Blur.Size = 5
+        Blur.Parent = Light
+
+        ColorC.Brightness = 0
+        ColorC.Contrast = 0.1
+        ColorC.Saturation = 0.25
+        ColorC.TintColor = Color3.fromRGB(255, 255, 255)
+        ColorC.Parent = Light
+
+        SunRays.Intensity = 0.1
+        SunRays.Spread = 0.8
+        SunRays.Parent = Light
+    end
 end
-
-
-local function disableShaders()
-    local lighting = game:GetService("Lighting")
-
-   
-    if lighting:FindFirstChild("ShadersBloom") then
-        lighting.ShadersBloom:Destroy()
-    end
-    if lighting:FindFirstChild("ShadersColorCorrection") then
-        lighting.ShadersColorCorrection:Destroy()
-    end
-    if lighting:FindFirstChild("ShadersBlur") then
-        lighting.ShadersBlur:Destroy()
-    end
-    if lighting:FindFirstChild("ShadersSkybox") then
-        lighting.ShadersSkybox:Destroy()
-    end
-
-    print("Shaders effect disabled")
-end
-
 
 mcuSection:AddButton({
-    Name = "Shaders",
+    Name = "shaders",
     Callback = function()
-        local lighting = game:GetService("Lighting")
-        if not lighting:FindFirstChild("ShadersBloom") then
-            enableShaders()
-        else
-            disableShaders()
-        end
+ 
+        isLightingEnabled = not isLightingEnabled
+   
+        ToggleLightingEffects()
     end
 })
 
@@ -2619,190 +2607,6 @@ funTab:AddButton({
 })
 
 
-
-targSection:AddButton({
-    Name = "fling gui",
-    Callback = function()
-        local Players = game:GetService("Players")
-        local Player = Players.LocalPlayer
-
-        local ScreenGui = Instance.new("ScreenGui")
-        local Frame = Instance.new("Frame")
-        local TextBox = Instance.new("TextBox")
-        local TextButton = Instance.new("TextButton")
-
-        ScreenGui.Parent = Player:WaitForChild("PlayerGui")
-        ScreenGui.ResetOnSpawn = false
-
-        Frame.Parent = ScreenGui
-        Frame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
-        Frame.Position = UDim2.new(0.5, -100, 0.5, -50)
-        Frame.Size = UDim2.new(0, 200, 0, 100)
-        Frame.Active = true
-        Frame.Draggable = true
-
-        TextBox.Parent = Frame
-        TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
-        TextBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-        TextBox.Font = Enum.Font.SourceSans
-        TextBox.PlaceholderText = "Enter username"
-        TextBox.Text = ""
-        TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
-        TextBox.TextSize = 14
-
-        TextButton.Parent = Frame
-        TextButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        TextButton.Position = UDim2.new(0.1, 0, 0.5, 0)
-        TextButton.Size = UDim2.new(0.8, 0, 0.4, 0)
-        TextButton.Font = Enum.Font.SourceSans
-        TextButton.Text = "FLING!"
-        TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TextButton.TextSize = 20
-
-        local function GetPlayer(Name)
-            Name = Name:lower()
-            for _, x in next, Players:GetPlayers() do
-                if x ~= Player then
-                    if x.Name:lower():match("^" .. Name) or x.DisplayName:lower():match("^" .. Name) then
-                        return x
-                    end
-                end
-            end
-            return nil
-        end
-
-        local function Message(_Title, _Text, Time)
-            game:GetService("StarterGui"):SetCore("SendNotification", {Title = _Title, Text = _Text, Duration = Time})
-        end
-
-        local function SkidFling(TargetPlayer)
-            local Character = Player.Character
-            local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
-            local RootPart = Humanoid and Humanoid.RootPart
-
-            local TCharacter = TargetPlayer.Character
-            local THumanoid = TCharacter and TCharacter:FindFirstChildOfClass("Humanoid")
-            local TRootPart = THumanoid and THumanoid.RootPart
-            local THead = TCharacter and TCharacter:FindFirstChild("Head")
-            local Accessory = TCharacter and TCharacter:FindFirstChildOfClass("Accessory")
-            local Handle = Accessory and Accessory:FindFirstChild("Handle")
-
-            if Character and Humanoid and RootPart then
-                if RootPart.Velocity.Magnitude < 50 then
-                    getgenv().OldPos = RootPart.CFrame
-                end
-                if THumanoid and THumanoid.Sit then
-                    return Message("Error Occurred", "Target is sitting", 5)
-                end
-                if THead then
-                    workspace.CurrentCamera.CameraSubject = THead
-                elseif Handle then
-                    workspace.CurrentCamera.CameraSubject = Handle
-                else
-                    workspace.CurrentCamera.CameraSubject = THumanoid
-                end
-                if not TCharacter:FindFirstChildWhichIsA("BasePart") then
-                    return
-                end
-                
-                local function FPos(BasePart, Pos, Ang)
-                    RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
-                    Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
-                    RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
-                    RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
-                end
-                
-                local function SFBasePart(BasePart)
-                    local TimeToWait = 2
-                    local Time = tick()
-                    local Angle = 0
-
-                    repeat
-                        if RootPart and THumanoid then
-                            if BasePart.Velocity.Magnitude < 50 then
-                                Angle = Angle + 100
-
-                                FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(2.25, 1.5, -2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(-2.25, -1.5, 2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
-                                task.wait()
-                            else
-                                FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
-                                task.wait()
-                                
-                                FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, -TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5 ,0), CFrame.Angles(math.rad(-90), 0, 0))
-                                task.wait()
-
-                                FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
-                                task.wait()
-                            end
-                        else
-                            break
-                        end
-                    until BasePart.Velocity.Magnitude > 500 or BasePart.Parent ~= TargetPlayer.Character or TargetPlayer.Parent ~= Players or not TargetPlayer.Character == TCharacter or THumanoid.Sit or Humanoid.Health <= 0 or tick() > Time + TimeToWait
-                end
-                
-                workspace.FallenPartsDestroyHeight = 0/0
-                
-                local BV = Instance.new("BodyVelocity")
-                BV.Name = "EpixVel"
-                BV.Parent = RootPart
-                BV.Velocity = Vector3.new(0, 0, 0)
-                BV.MaxForce = Vector3.new(300000, 300000, 300000)
-
-                SkidFling(TargetPlayer)
-            end
-        end
-
-        TextButton.MouseButton1Click:Connect(function()
-            local PlayerName = TextBox.Text
-            local TargetPlayer = GetPlayer(PlayerName)
-            if TargetPlayer then
-                SkidFling(TargetPlayer)
-                Message("Success", "Flinging " .. PlayerName, 5)
-            else
-                Message("Error", "Could not find player", 5)
-            end
-        end)
-    end
-})
-
-
 miscTab:AddButton({
     Name = "Destroy UI",
     Callback = function()
@@ -4111,7 +3915,7 @@ local function fling()
 end
 
 
-targSection:AddButton({
+mageSection:AddButton({
     Name = "Touch Fling",
     Callback = function()
         hiddenfling = not hiddenfling
@@ -4140,4 +3944,319 @@ targSection:AddButton({
     end
 })
 
+local voidProtectionEnabled = false
+
+local function ToggleVoidProtection(bool)
+    if bool then
+        game.Workspace.FallenPartsDestroyHeight = 0/0  
+    else
+        game.Workspace.FallenPartsDestroyHeight = -500  
+    end
+end
+
+mageSection:AddButton({
+    Name = "anti-void",
+    Callback = function()
+
+        voidProtectionEnabled = not voidProtectionEnabled
+
+        ToggleVoidProtection(voidProtectionEnabled)
+    end
+})
+
+                   
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local savedPosition = nil
+
+
+tpSection:AddButton({
+    Name = "Save Position",
+    Callback = function()
+        savedPosition = humanoidRootPart.Position
+        OrionLib:MakeNotification({
+            Name = "Position Saved",
+            Content = "Your position has been saved at: " .. tostring(savedPosition),
+            Image = "rbxassetid://4483345998",  
+            Time = 5
+        })
+    end
+})
+
+tpSection:AddButton({
+    Name = "GoTo Saved Position",
+    Callback = function()
+        if savedPosition then
+            humanoidRootPart.CFrame = CFrame.new(savedPosition)
+            OrionLib:MakeNotification({
+                Name = "Teleport Successful",
+                Content = "You have been teleported to your saved position.",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+        else
+            OrionLib:MakeNotification({
+                Name = "Error",
+                Content = "No position has been saved!",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+        end
+    end
+})
+
+
+tpSection:AddButton({
+    Name = "Clear Saved Position",
+    Callback = function()
+        savedPosition = nil
+        OrionLib:MakeNotification({
+            Name = "Position Cleared",
+            Content = "Your saved position has been cleared.",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+})
+
+funTab:AddButton({
+    Name = "go insane",
+    Callback = function()
+        local plr = game.Players.LocalPlayer  
+        if plr.Character and plr.Character:FindFirstChild("Humanoid") then
+            task.wait()
+            plr.Character.Humanoid:ChangeState(0) 
+            local bav = Instance.new("BodyAngularVelocity")  
+            bav.Parent = plr.Character.HumanoidRootPart  
+            bav.Name = "Spin"  
+            bav.MaxTorque = Vector3.new(0, math.huge, 0)  
+            bav.AngularVelocity = Vector3.new(0, 150, 0)  
+            task.wait(3) 
+            plr.Character.Humanoid:ChangeState(15)  
+        end
+    end
+})
+
+local animSection = funTab:AddSection({
+    Name = "R6 FE animations"
+})
+
+
+local weirdAnimationPlaying = false
+local weirdCurrentAnim = nil
+animSection:AddButton({
+    Name = "weird",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "215384594"  
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not weirdCurrentAnim then
+                weirdCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if weirdAnimationPlaying then
+                weirdCurrentAnim:Stop()
+                weirdAnimationPlaying = false
+            else
+                weirdCurrentAnim:Play(0)
+                weirdCurrentAnim:AdjustSpeed(1)
+                weirdAnimationPlaying = true
+            end
+        end
+    end
+})
+
+
+local heroJumpAnimationPlaying = false
+local heroJumpCurrentAnim = nil
+animSection:AddButton({
+    Name = "hero jump",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "184574340"  
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not heroJumpCurrentAnim then
+                heroJumpCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if heroJumpAnimationPlaying then
+                heroJumpCurrentAnim:Stop()
+                heroJumpAnimationPlaying = false
+            else
+                heroJumpCurrentAnim:Play(0)
+                heroJumpCurrentAnim:AdjustSpeed(1)
+                heroJumpAnimationPlaying = true
+            end
+        end
+    end
+})
+
+
+local floatingHeadAnimationPlaying = false
+local floatingHeadCurrentAnim = nil
+animSection:AddButton({
+    Name = "floating head",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "121572214"  
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not floatingHeadCurrentAnim then
+                floatingHeadCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if floatingHeadAnimationPlaying then
+                floatingHeadCurrentAnim:Stop()
+                floatingHeadAnimationPlaying = false
+            else
+                floatingHeadCurrentAnim:Play(0)
+                floatingHeadCurrentAnim:AdjustSpeed(1)
+                floatingHeadAnimationPlaying = true
+            end
+        end
+    end
+})
+
+
+local cloneIllusionAnimationPlaying = false
+local cloneIllusionCurrentAnim = nil
+animSection:AddButton({
+    Name = "head throw",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "35154961"  
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not cloneIllusionCurrentAnim then
+                cloneIllusionCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if cloneIllusionAnimationPlaying then
+                cloneIllusionCurrentAnim:Stop()
+                cloneIllusionAnimationPlaying = false
+            else
+                cloneIllusionCurrentAnim:Play(0)
+                cloneIllusionCurrentAnim:AdjustSpeed(1)
+                cloneIllusionAnimationPlaying = true
+            end
+        end
+    end
+})
+
+
+local moonDanceAnimationPlaying = false
+local moonDanceCurrentAnim = nil
+animSection:AddButton({
+    Name = "moon dance",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "45834924" 
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not moonDanceCurrentAnim then
+                moonDanceCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if moonDanceAnimationPlaying then
+                moonDanceCurrentAnim:Stop()
+                moonDanceAnimationPlaying = false
+            else
+                moonDanceCurrentAnim:Play(0)
+                moonDanceCurrentAnim:AdjustSpeed(1)
+                moonDanceAnimationPlaying = true
+            end
+        end
+    end
+})
+
+
+local armDetachAnimationPlaying = false
+local armDetachCurrentAnim = nil
+animSection:AddButton({
+    Name = "crazy",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "33796059"  
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not armDetachCurrentAnim then
+                armDetachCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if armDetachAnimationPlaying then
+                armDetachCurrentAnim:Stop()
+                armDetachAnimationPlaying = false
+            else
+                armDetachCurrentAnim:Play(0)
+                armDetachCurrentAnim:AdjustSpeed(100)
+                armDetachAnimationPlaying = true
+            end
+        end
+    end
+})
+
+local dinoWalkAnimationPlaying = false
+local dinoWalkCurrentAnim = nil
+animSection:AddButton({
+    Name = "dino walk",
+    Callback = function()
+        local plr = game.Players.LocalPlayer
+        local character = plr.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid then
+            local AnimationId = "204328711" 
+            local Anim = Instance.new("Animation")
+            Anim.AnimationId = "rbxassetid://"..AnimationId
+            
+            if not dinoWalkCurrentAnim then
+                dinoWalkCurrentAnim = humanoid:LoadAnimation(Anim)
+            end
+            
+            if dinoWalkAnimationPlaying then
+                dinoWalkCurrentAnim:Stop()
+                dinoWalkAnimationPlaying = false
+            else
+                dinoWalkCurrentAnim:Play(0)
+                dinoWalkCurrentAnim:AdjustSpeed(1)
+                dinoWalkAnimationPlaying = true
+            end
+        end
+    end
+})
+
 OrionLib:Init()
+
