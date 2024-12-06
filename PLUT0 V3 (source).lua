@@ -203,6 +203,33 @@ camSection:AddBind({
     end    
 })
 
+local teleportEnabled = false
+local teleportOffset = 5 
+
+
+local function toggleTeleport()
+    teleportEnabled = not teleportEnabled
+end
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end 
+    if input.KeyCode == Enum.KeyCode.E and teleportEnabled then
+        local mouse = game.Players.LocalPlayer:GetMouse()
+        if mouse.Target then
+            game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + teleportOffset, mouse.Hit.z)
+        end
+    end
+end)
+
+
+playSection:AddButton({
+    Name = "[E] to Teleport",
+    Callback = function()
+        toggleTeleport()
+    end
+})
+
+
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = game.Players.LocalPlayer
 local noclipEnabled = false
