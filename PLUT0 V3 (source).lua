@@ -127,7 +127,6 @@ RunService.RenderStepped:Connect(function()
         if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
             isLockedOn = false
             targetPlayer = nil
-            print("Target player died")
             return
         end
         local targetPosition = targetPlayer.Character.Head.Position
@@ -141,7 +140,6 @@ camSection:AddButton({
     Name = "[Q] to lock (head)",
     Callback = function()
         lockEnabled = not lockEnabled
-        print("Lock feature " .. (lockEnabled and "enabled" or "disabled"))
         if not lockEnabled then
             isLockedOn = false
             targetPlayer = nil
@@ -220,7 +218,6 @@ RunService.RenderStepped:Connect(function()
         if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
             isLockedOn = false
             targetPlayer = nil
-            print("Target player died")
             return
         end
         local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
@@ -234,7 +231,6 @@ camSection:AddButton({
     Name = "[Q] to lock (torso)",
     Callback = function()
         lockEnabled = not lockEnabled
-        print("Lock feature " .. (lockEnabled and "enabled" or "disabled"))
         if not lockEnabled then
             isLockedOn = false
             targetPlayer = nil
@@ -606,6 +602,8 @@ visSection:AddButton({
 })
 
 
+local selectedColor = Color3.fromRGB(255, 0, 0) 
+
 local function UpdateESPColor()
     for _, billboard in pairs(nameESPObjects) do
         if billboard and billboard:FindFirstChild("TextLabel") then
@@ -622,27 +620,17 @@ local function UpdateESPColor()
     if espEnabled then
         for _, item in ipairs(espFolder:GetChildren()) do
             item.OutlineColor = selectedColor
-        
         end
     end
 end
 
 
-visSection:AddDropdown({
+visSection:AddColorpicker({
     Name = "ESP Color",
-    Options = {"Blue", "Green", "Yellow", "Red"},
-    Default = "Red",
-    Callback = function(option)
-        if option == "Blue" then
-            selectedColor = Color3.fromRGB(0, 0, 255)
-        elseif option == "Green" then
-            selectedColor = Color3.fromRGB(0, 255, 0)
-        elseif option == "Yellow" then
-            selectedColor = Color3.fromRGB(255, 255, 0)
-        elseif option == "Red" then
-            selectedColor = Color3.fromRGB(255, 0, 0)
-        end
-        UpdateESPColor()
+    Default = Color3.fromRGB(255, 0, 0),  
+    Callback = function(Value)
+        selectedColor = Value 
+        UpdateESPColor()      
     end
 })
 
@@ -826,18 +814,14 @@ mcuSection:AddButton({
 local originalFOV = workspace.CurrentCamera.FieldOfView 
 
 
-local FOVOptions = {"80", "90", "100", "110", "120"}
-
-
-camSection:AddDropdown({
-    Name = "FOV Setter",
-    Default = "70", 
-    Options = FOVOptions,
-    Callback = function(Value)
-        local fovValue = tonumber(Value) 
-        if fovValue then
-            workspace.CurrentCamera.FieldOfView = fovValue
-        end
+camSection:AddSlider({
+    Name = "FOV",
+    Min = 70,  
+    Max = 120, 
+    Default = game.Workspace.CurrentCamera.FieldOfView, 
+    Increment = 1,  
+    Callback = function(value)
+        game.Workspace.CurrentCamera.FieldOfView = value
     end
 })
 
@@ -1204,7 +1188,7 @@ mcuSection:AddButton({
 mcuSection:AddButton({
     Name = "Set Night-time",
     Callback = function()
-        --
+        
         local lighting = game:GetService("Lighting")
         
         lighting.ClockTime = 20
@@ -4258,5 +4242,6 @@ animSection:AddButton({
     end
 })
 
-OrionLib:Init()
 
+
+OrionLib:Init()
