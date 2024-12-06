@@ -86,23 +86,50 @@ local Mouse = LocalPlayer:GetMouse()
 local isLockedOn = false
 local targetPlayer = nil
 local lockEnabled = false
+local smoothingFactor = 0.1
+local bodyPartSelected = "Head"
+local toggleKey = Enum.KeyCode.Q
 
 
-local function getNearestPlayer()
+local function isR6(character)
+    return character:FindFirstChild("Torso") ~= nil and character:FindFirstChild("Left Arm") ~= nil
+end
+
+
+local function getBodyPart(character, part)
+    if isR6(character) then
+        local r6Parts = {
+            Head = "Head",
+            LeftUpperArm = "Left Arm",
+            RightUpperArm = "Right Arm",
+            LeftUpperLeg = "Left Leg",
+            RightUpperLeg = "Right Leg",
+            UpperTorso = "Torso",
+        }
+        return r6Parts[part] or "Head"
+    else
+        return part
+    end
+end
+
+
+local function getNearestPlayerToMouse()
     local nearestPlayer = nil
     local shortestDistance = math.huge
-    
+    local mousePosition = Mouse.Hit.p
+
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
             local headPosition = player.Character.Head.Position
-            local distance = (headPosition - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+            local distance = (headPosition - mousePosition).Magnitude
+
             if distance < shortestDistance then
                 nearestPlayer = player
                 shortestDistance = distance
             end
         end
     end
-    
+
     return nearestPlayer
 end
 
@@ -114,136 +141,67 @@ local function toggleLockOnPlayer()
         isLockedOn = false
         targetPlayer = nil
     else
-        targetPlayer = getNearestPlayer()
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
-            isLockedOn = true
-        end
-    end
-end
-
-
-RunService.RenderStepped:Connect(function()
-    if lockEnabled and isLockedOn and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("Head") then
-        if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
-            isLockedOn = false
-            targetPlayer = nil
-            return
-        end
-        local targetPosition = targetPlayer.Character.Head.Position
-        local cameraPosition = Camera.CFrame.Position
-        Camera.CFrame = CFrame.new(cameraPosition, targetPosition)
-    end
-end)
-
-
-camSection:AddButton({
-    Name = "[Q] to lock (head)",
-    Callback = function()
-        lockEnabled = not lockEnabled
-        if not lockEnabled then
-            isLockedOn = false
-            targetPlayer = nil
-        end
-    end
-})
-
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.Q then
-        toggleLockOnPlayer()
-    end
-end)
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
-local Mouse = LocalPlayer:GetMouse()
-
-local isLockedOn = false
-local targetPlayer = nil
-local lockEnabled = false
-local noclipEnabled = false
-local infiniteJumpEnabled = false
-local espEnabled = false
-local teleportEnabled = false
-local teleportOffset = Vector3.new(0, 5, 0) 
-
-
-local function getNearestPlayer()
-    local nearestPlayer = nil
-    local shortestDistance = math.huge
-    
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local torsoPosition = player.Character.HumanoidRootPart.Position
-            local distance = (torsoPosition - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-            if distance < shortestDistance then
-                nearestPlayer = player
-                shortestDistance = distance
+        targetPlayer = getNearestPlayerToMouse()
+        if targetPlayer and targetPlayer.Character then
+            local part = getBodyPart(targetPlayer.Character, bodyPartSelected)
+            if targetPlayer.Character:FindFirstChild(part) then
+                isLockedOn = true
             end
         end
     end
-    
-    return nearestPlayer
-end
-
-
-local function toggleLockOnPlayer()
-    if not lockEnabled then return end
-
-    if isLockedOn then
-        isLockedOn = false
-        targetPlayer = nil
-    else
-        targetPlayer = getNearestPlayer()
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            isLockedOn = true
-        end
-    end
-end
-
-
-local function smoothLockOnTarget(targetPosition)
-    local cameraPosition = Camera.CFrame.Position
-    local direction = (targetPosition - cameraPosition).Unit
-    local newCameraPosition = cameraPosition + direction * 0.1
-    Camera.CFrame = CFrame.new(newCameraPosition, targetPosition)
 end
 
 
 RunService.RenderStepped:Connect(function()
-    if lockEnabled and isLockedOn and targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        if targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then
+    if lockEnabled and isLockedOn and targetPlayer and targetPlayer.Character then
+        local partName = getBodyPart(targetPlayer.Character, bodyPartSelected)
+        local part = targetPlayer.Character:FindFirstChild(partName)
+
+        if part and targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+            local targetPosition = part.Position
+            local cameraPosition = Camera.CFrame.Position
+
+            Camera.CFrame = CFrame.new(cameraPosition, targetPosition) * CFrame.new(0, 0, smoothingFactor)
+        else
             isLockedOn = false
             targetPlayer = nil
-            return
         end
-        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
-        local cameraPosition = Camera.CFrame.Position
-        Camera.CFrame = CFrame.new(cameraPosition, targetPosition)
     end
 end)
 
-
 camSection:AddButton({
-    Name = "[Q] to lock (torso)",
+    Name = "[Q] to AimLock",
     Callback = function()
         lockEnabled = not lockEnabled
         if not lockEnabled then
             isLockedOn = false
             targetPlayer = nil
         end
+
+        camSection:UpdateButton("Enable Lock", {
+            Name = lockEnabled and "Disable Lock" or "Enable Lock",
+        })
     end
 })
 
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.Q then
-        toggleLockOnPlayer()
+camSection:AddDropdown({
+    Name = "AimLock on bodyparts",
+    Default = "Head",
+    Options = {"Head", "UpperTorso", "RightUpperArm", "LeftUpperLeg", "RightUpperLeg", "LeftUpperArm"},
+    Callback = function(part)
+        bodyPartSelected = part 
     end
-end)
+})
+
+camSection:AddBind({
+    Name = "AimLock keybind",
+    Default = Enum.KeyCode.Q,
+    Hold = false,
+    Callback = function()
+        toggleLockOnPlayer()
+    end    
+})
 
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = game.Players.LocalPlayer
@@ -316,79 +274,6 @@ UserInputService.JumpRequest:Connect(function()
         LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
     end
 end)
-
-
-local teleportEnabled = false
-local teleportOffset = 5 
-
-
-local function toggleTeleport()
-    teleportEnabled = not teleportEnabled
-end
-
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessedEvent)
-    if gameProcessedEvent then return end 
-    if input.KeyCode == Enum.KeyCode.E and teleportEnabled then
-        local mouse = game.Players.LocalPlayer:GetMouse()
-        if mouse.Target then
-            game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(mouse.Hit.x, mouse.Hit.y + teleportOffset, mouse.Hit.z)
-        end
-    end
-end)
-
-
-playSection:AddButton({
-    Name = "[E] to Teleport",
-    Callback = function()
-        toggleTeleport()
-    end
-})
-
-camSection:AddButton({
-    Name = "[V] to zoom",
-    Callback = function()
-        fieldOfViewActive = not fieldOfViewActive
-        
-        if fieldOfViewActive then
-            
-            local uis = game:GetService("UserInputService")
-            local camera = workspace.CurrentCamera
-            
-            local function onInputBegan(input)
-                if input.KeyCode == Enum.KeyCode.V then
-                    camera.FieldOfView = 10
-                end
-            end
-            
-            local function onInputEnded(input)
-                if input.KeyCode == Enum.KeyCode.V then
-                    camera.FieldOfView = 70
-                end
-            end
-            
-            uis.InputBegan:Connect(onInputBegan)
-            uis.InputEnded:Connect(onInputEnded)
-        else
-          
-            local uis = game:GetService("UserInputService")
-            local connections = uis.InputBegan:GetConnections()
-            for _, conn in ipairs(connections) do
-                conn:Disconnect()
-            end
-            connections = uis.InputEnded:GetConnections()
-            for _, conn in ipairs(connections) do
-                conn:Disconnect()
-            end
-            
-          
-            workspace.CurrentCamera.FieldOfView = 70
-        end
-    end
-})
-
-
---------------------------------------------------------
-
 
 
 
