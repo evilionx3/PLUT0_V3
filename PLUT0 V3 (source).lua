@@ -5,11 +5,20 @@ __________ __          __   _______          ________
  |    |   |  |_|  |  /|  |  \  \_/   \  \   / /       \
  |____|   |____/____/ |__|   \_____  /   \_/ /______  /
                                    \/               \/ 
-  enjoy this script and its source code.
+         
+            -- // • MAIN DETAILS • \\ --
 
-  i hate obfuscators.
+            --// • Credits: Shlexware
+            --// • Owner: r4ge2
+            --// • Version: 3.6
+            --// • Libraries & Modules: 1
+            --// • Developers: r4ge2
+            --// • Average Load Time: 0 - 5
+
 
 --]]
+
+
 
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
@@ -34,6 +43,11 @@ local mainTab = Window:MakeTab({
 local playSection = mainTab:AddSection({
     Name = "Player"
 })
+
+local mveSection = mainTab:AddSection({
+    Name = "movement"
+})
+
 
 local funTab = Window:MakeTab({
     Name = "fun",
@@ -945,12 +959,11 @@ playSection:AddSlider({
     end
 })
   
-playSection:AddSlider({
+mveSection:AddSlider({
     Name = "Speed Power",
     Min = 20,
     Max = 500,
     Default = 20,
-    Color = Color3.fromRGB(255, 255, 255),
     Increment = 1,
     ValueName = "Speed",
     Callback = function(s)
@@ -961,12 +974,11 @@ playSection:AddSlider({
     end
 })
 
-playSection:AddSlider({
+mveSection:AddSlider({
     Name = "Jump Power",
     Min = 60,
     Max = 300,
     Default = 60,
-    Color = Color3.fromRGB(255, 255, 255),
     Increment = 1,
     ValueName = "Jump",
     Callback = function(s)
@@ -4154,6 +4166,67 @@ animSection:AddButton({
     end
 })
 
+mveSection:AddButton({
+    Name = "[C] to speed",
+    Callback = function()
+        isSpeedEnabled = not isSpeedEnabled
+        isMoving = false  
+        if isSpeedEnabled then
+            OrionLib:MakeNotification({
+                Name = "Speed Enabled",
+                Content = "Speed movement is now enabled. Hold C to move.",
+                Image = "rbxassetid://6031761837",
+                Time = 3
+            })
+        else
+            OrionLib:MakeNotification({
+                Name = "Speed Disabled",
+                Content = "Speed movement is now disabled.",
+                Image = "rbxassetid://6031761837",
+                Time = 3
+            })
+        end
+    end
+})
 
+mveSection:AddSlider({
+    Name = "CFrame speed",
+    Min = 10,
+    Max = 200,
+    Default = 25,  
+    Increment = 5,
+    Callback = function(val)
+        speed = val
+    end
+})
+
+
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.C then
+        if isSpeedEnabled then
+            isCKeyHeld = true 
+        end
+    end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.C then
+        isCKeyHeld = false  
+    end
+end)
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if not character then return end
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    if isSpeedEnabled and isCKeyHeld then
+        local direction = humanoidRootPart.CFrame.LookVector
+        humanoidRootPart.CFrame = humanoidRootPart.CFrame + direction * (speed / 10)
+    end
+end)
 
 OrionLib:Init()
