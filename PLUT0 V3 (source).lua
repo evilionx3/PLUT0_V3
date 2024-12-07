@@ -950,6 +950,7 @@ playSection:AddSlider({
     Name = "Fly Speed",
     Min = 1.4,
     Max = 20,
+    Color = Color3.fromRGB(0, 255, 0),
     Default = 1.4,
     Increment = 0.5,
     ValueName = "Speed",
@@ -963,6 +964,7 @@ mveSection:AddSlider({
     Name = "Speed Power",
     Min = 20,
     Max = 500,
+    Color = Color3.fromRGB(0, 255, 0),
     Default = 20,
     Increment = 1,
     ValueName = "Speed",
@@ -979,6 +981,7 @@ mveSection:AddSlider({
     Min = 60,
     Max = 300,
     Default = 60,
+    Color = Color3.fromRGB(0, 255, 0),
     Increment = 1,
     ValueName = "Jump",
     Callback = function(s)
@@ -4228,5 +4231,125 @@ game:GetService("RunService").Heartbeat:Connect(function()
         humanoidRootPart.CFrame = humanoidRootPart.CFrame + direction * (speed / 10)
     end
 end)
+
+local AntiBangEnabled = false
+local IsVoiding = false
+local AnimCheck = true
+local AbMagnitude = 2
+local AbDelay = 1
+local RanTP = false
+local VoidDepth = -499
+
+local Player = game.Players.LocalPlayer
+local RootPart, Humanoid, Character
+local Camera = game.Workspace.CurrentCamera
+
+
+local function GetNearestPlayers()
+    if RootPart then
+        for _, x in next, game.Players:GetPlayers() do
+            if x ~= Player then
+                local x_Character = x.Character
+                local x_Humanoid = x_Character and x_Character:FindFirstChildWhichIsA("Humanoid")
+                local x_RootPart = x_Humanoid and x_Humanoid.RootPart
+
+                if x_RootPart and (RootPart.Position - x_RootPart.Position).Magnitude < AbMagnitude then
+                    if AnimCheck then
+                        for _, track in next, x_Humanoid:GetPlayingAnimationTracks() do
+                            if track.Animation and (track.Animation.AnimationId:match("148840371") or track.Animation.AnimationId:match("5918726674")) then
+                                return true
+                            end
+                        end
+                        return false
+                    else
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+
+local function VoidPlayer()
+    if Character and Humanoid and RootPart then
+        local CurrentPosition = RootPart.CFrame
+        local OldDH = workspace.FallenPartsDestroyHeight
+
+        workspace.FallenPartsDestroyHeight = math.huge 
+        RootPart.CFrame = CFrame.new(0, VoidDepth, 0) * CFrame.Angles(math.rad(90), 0, 0)
+        RootPart.AssemblyLinearVelocity = Vector3.new()
+        task.wait(AbDelay)
+
+        RootPart.AssemblyLinearVelocity = Vector3.new()
+        RootPart.CFrame = CurrentPosition
+        workspace.FallenPartsDestroyHeight = OldDH
+    end
+end
+
+
+spawn(function()
+    while true do
+        if AntiBangEnabled then
+            Character = Player.Character
+            Humanoid = Character and Character:FindFirstChildWhichIsA("Humanoid")
+            RootPart = Humanoid and Humanoid.RootPart
+
+            if GetNearestPlayers() and Humanoid and RootPart and not IsVoiding then
+                if RanTP then
+                    RootPart.CFrame = RootPart.CFrame + Vector3.new(math.random(1, 50), 0, math.random(1, 50))
+                else
+                    IsVoiding = true
+                    local CurrentPosition = RootPart.Velocity.Magnitude < 50 and RootPart.CFrame or Camera.Focus
+                    local Timer = tick()
+                    local OldDH = workspace.FallenPartsDestroyHeight
+
+                    repeat
+                        workspace["\x46\x61\x6C\x6C\x65\x6E\x50\x61\x72\x74\x73\x44\x65\x73\x74\x72\x6F\x79\x48\x65\x69\x67\x68\x74"] = 0 / 0
+                        RootPart.CFrame = CFrame.new(0, VoidDepth, 0) * CFrame.Angles(math.rad(90), 0, 0)
+                        RootPart.AssemblyLinearVelocity = Vector3.new()
+                        task.wait()
+                    until tick() > Timer + AbDelay
+
+                    RootPart.AssemblyLinearVelocity = Vector3.new()
+                    RootPart.CFrame = CurrentPosition
+
+                    Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+                    workspace["\x46\x61\x6C\x6C\x65\x6E\x50\x61\x72\x74\x73\x44\x65\x73\x74\x72\x6F\x79\x48\x65\x69\x67\x68\x74"] = OldDH
+                    IsVoiding = false
+                end
+            end
+        end
+        task.wait()
+    end
+end)
+
+
+local function ToggleAntiBang()
+    AntiBangEnabled = not AntiBangEnabled
+
+    if AntiBangEnabled then
+        OrionLib:MakeNotification({
+            Name = "anti-Bang is now ON",
+            Content = "You are now protected from getting diddled",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    else
+        OrionLib:MakeNotification({
+            Name = "anti-bang is now OFF",
+            Content = "you are no longer safe..",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+    end
+end
+
+
+mageSection:AddButton({
+    Name = "anti-bang",
+    Callback = ToggleAntiBang
+})
 
 OrionLib:Init()
