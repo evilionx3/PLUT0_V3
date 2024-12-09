@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 
 local Window = OrionLib:MakeWindow({
-    Name = "PLUT0_V3",
+    Name = "PLUT0_V3  |  universal  ",
     HidePremium = false,
     IntroEnabled = false,
     SaveConfig = true,
@@ -2854,6 +2854,56 @@ local function toggleFaceBang()
     end
 end
 
+local stopTeleport = true 
+local teleportDistance = 4
+local followActive = false 
+
+local function toggleFollow()
+    if not selectedPlayer then
+        notify("Error", "No player selected!", 5)
+        return
+    end
+
+    followActive = not followActive
+    stopTeleport = not followActive 
+
+    if followActive then
+        notify("Follow Started", "Following " .. selectedPlayer.Name .. ".", 5)
+
+
+        coroutine.wrap(function()
+            while not stopTeleport do
+                if selectedPlayer and selectedPlayer.Character then
+                    local targetHumanoidRootPart = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    local playerHumanoidRootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+                    if targetHumanoidRootPart and playerHumanoidRootPart then
+                       
+                        local targetCFrame = targetHumanoidRootPart.CFrame
+                        local targetPosition = targetCFrame.Position - targetCFrame.LookVector * teleportDistance
+
+                        playerHumanoidRootPart.CFrame = CFrame.new(targetPosition, targetCFrame.Position)
+
+                        
+                        teleportDistance = (teleportDistance == 4) and 1.5 or 4
+                    else
+                        notify("Error", "Target lost or invalid!", 5)
+                        stopTeleport = true
+                        followActive = false
+                        return
+                    end
+                else
+                    notify("Error", "Selected player is invalid!", 5)
+                    stopTeleport = true
+                    followActive = false
+                    return
+                end
+                wait(0.1)
+            end
+        end)()
+    end
+end
+
 
 pltargetTab:AddTextbox({
     Name = "Player to Target:",
@@ -2885,6 +2935,14 @@ pltargetTab:AddButton({
         toggleBang()
     end
 })
+
+pltargetTab:AddButton({
+    Name = "tpBang",
+    Callback = function()
+        toggleFollow()
+    end
+})
+
 
 pltargetTab:AddButton({
     Name = "FaceBang",
