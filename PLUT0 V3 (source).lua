@@ -4165,65 +4165,68 @@ animSection:AddButton({
 })
 
 
-local armDetachAnimationPlaying = false
-local armDetachCurrentAnim = nil
+local dinoWalkAnimationPlaying = false
+local dinoWalkCurrentAnim = nil
+local dinoWalkHeartbeatConnection = nil 
+local RunService = game:GetService("RunService")
+
+
+local function getCharacterAndHumanoid()
+    local plr = game.Players.LocalPlayer
+    local character = plr.Character or plr.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid")
+    return character, humanoid
+end
+
 animSection:AddButton({
-    Name = "crazy",
+    Name = "goon",
     Callback = function()
-        local plr = game.Players.LocalPlayer
-        local character = plr.Character
-        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-        
+        local character, humanoid = getCharacterAndHumanoid()
         if humanoid then
-            local AnimationId = "33796059"  
+            local AnimationId = "168268306"
             local Anim = Instance.new("Animation")
-            Anim.AnimationId = "rbxassetid://"..AnimationId
-            
-            if not armDetachCurrentAnim then
-                armDetachCurrentAnim = humanoid:LoadAnimation(Anim)
+            Anim.AnimationId = "rbxassetid://" .. AnimationId
+
+            if not dinoWalkCurrentAnim or dinoWalkCurrentAnim.Parent ~= humanoid then
+
+                dinoWalkCurrentAnim = humanoid:LoadAnimation(Anim)
             end
-            
-            if armDetachAnimationPlaying then
-                armDetachCurrentAnim:Stop()
-                armDetachAnimationPlaying = false
+
+            if dinoWalkAnimationPlaying then
+
+                dinoWalkAnimationPlaying = false
+                if dinoWalkCurrentAnim.IsPlaying then
+                    dinoWalkCurrentAnim:Stop()
+                end
+                if dinoWalkHeartbeatConnection then
+                    dinoWalkHeartbeatConnection:Disconnect()
+                    dinoWalkHeartbeatConnection = nil
+                end
             else
-                armDetachCurrentAnim:Play(0)
-                armDetachCurrentAnim:AdjustSpeed(100)
-                armDetachAnimationPlaying = true
+
+                dinoWalkAnimationPlaying = true
+                dinoWalkHeartbeatConnection = RunService.Heartbeat:Connect(function()
+                    if dinoWalkCurrentAnim.IsPlaying then
+                        dinoWalkCurrentAnim:Stop()
+                    else
+                        dinoWalkCurrentAnim:Play(0)
+                        dinoWalkCurrentAnim:AdjustSpeed(50)
+                    end
+                end)
             end
         end
     end
 })
 
-local dinoWalkAnimationPlaying = false
-local dinoWalkCurrentAnim = nil
-animSection:AddButton({
-    Name = "dino walk",
-    Callback = function()
-        local plr = game.Players.LocalPlayer
-        local character = plr.Character
-        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-        
-        if humanoid then
-            local AnimationId = "204328711" 
-            local Anim = Instance.new("Animation")
-            Anim.AnimationId = "rbxassetid://"..AnimationId
-            
-            if not dinoWalkCurrentAnim then
-                dinoWalkCurrentAnim = humanoid:LoadAnimation(Anim)
-            end
-            
-            if dinoWalkAnimationPlaying then
-                dinoWalkCurrentAnim:Stop()
-                dinoWalkAnimationPlaying = false
-            else
-                dinoWalkCurrentAnim:Play(0)
-                dinoWalkCurrentAnim:AdjustSpeed(1)
-                dinoWalkAnimationPlaying = true
-            end
-        end
+
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    dinoWalkAnimationPlaying = false
+    if dinoWalkHeartbeatConnection then
+        dinoWalkHeartbeatConnection:Disconnect()
+        dinoWalkHeartbeatConnection = nil
     end
-})
+    dinoWalkCurrentAnim = nil
+end)
 
 mveSection:AddButton({
     Name = "[C] to speed",
