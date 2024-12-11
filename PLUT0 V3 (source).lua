@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 
 local Window = OrionLib:MakeWindow({
-    Name = "PLUT0_V3  |  universal V3.6 ",
+    Name = "PLUT0_V3  |  universal V3.6  |",
     HidePremium = false,
     IntroEnabled = false,
     SaveConfig = true,
@@ -2735,7 +2735,7 @@ local function toggleBang()
 
         BGanimationTrack = humanoid:LoadAnimation(clapAnimation)
         BGanimationTrack:Play()
-        BGanimationTrack:AdjustSpeed(10)
+        BGanimationTrack:AdjustSpeed(5)
 
         
         spawn(function()
@@ -2829,7 +2829,7 @@ local function toggleFaceBang()
         bangAnimation.AnimationId = animationId
         animationTrack = humanoid:LoadAnimation(bangAnimation)
         animationTrack:Play()
-        animationTrack:AdjustSpeed(10)
+        animationTrack:AdjustSpeed(5)
 
         faceBangConnection = RunService.Heartbeat:Connect(function()
             if not bangActive then return end
@@ -2854,9 +2854,16 @@ local function toggleFaceBang()
     end
 end
 
-local stopTeleport = true 
-local teleportDistance = 4
-local followActive = false 
+local TweenService = game:GetService("TweenService")
+local stopTeleport = true
+local followActive = false
+
+local function tweenToPosition(part, targetPosition, targetLookPosition, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    local tween = TweenService:Create(part, tweenInfo, {CFrame = CFrame.new(targetPosition, targetLookPosition)})
+    tween:Play()
+    tween.Completed:Wait()
+end
 
 local function toggleFollow()
     if not selectedPlayer then
@@ -2865,25 +2872,30 @@ local function toggleFollow()
     end
 
     followActive = not followActive
-    stopTeleport = not followActive 
+    stopTeleport = not followActive
 
     if followActive then
-
         coroutine.wrap(function()
+            local moveForward = true 
+
             while not stopTeleport do
                 if selectedPlayer and selectedPlayer.Character then
                     local targetHumanoidRootPart = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
                     local playerHumanoidRootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 
                     if targetHumanoidRootPart and playerHumanoidRootPart then
-                       
                         local targetCFrame = targetHumanoidRootPart.CFrame
-                        local targetPosition = targetCFrame.Position - targetCFrame.LookVector * teleportDistance
+                        local targetPosition
 
-                        playerHumanoidRootPart.CFrame = CFrame.new(targetPosition, targetCFrame.Position)
+                        if moveForward then
+                            targetPosition = targetCFrame.Position - targetCFrame.LookVector * 1 
+                        else
+                            targetPosition = targetCFrame.Position - targetCFrame.LookVector * 5 
+                        end
 
-                        
-                        teleportDistance = (teleportDistance == 4) and 1.5 or 4
+                        tweenToPosition(playerHumanoidRootPart, targetPosition, targetCFrame.Position, 0.1)
+
+                        moveForward = not moveForward
                     else
                         notify("Error", "Target lost or invalid!", 5)
                         stopTeleport = true
@@ -2896,11 +2908,13 @@ local function toggleFollow()
                     followActive = false
                     return
                 end
-                wait(0.1)
+
+                wait(0) 
             end
         end)()
     end
 end
+
 
 
 pltargetTab:AddTextbox({
@@ -2965,9 +2979,9 @@ pltargetTab:AddButton({
 
 pltargetTab:AddSlider({
     Name = "Bang Speed",
-    Min = 10,
+    Min = 5,
     Max = 30,
-    Default = 10,  
+    Default = 5,  
     Increment = 0.5,
     Callback = function(speed)
         if bangActive and animationTrack then
