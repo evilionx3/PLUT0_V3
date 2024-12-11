@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 
 local Window = OrionLib:MakeWindow({
-    Name = "PLUT0_V3  |  universal V3.6  |",
+    Name = "PLUT0_V3  |  universal V3.6",
     HidePremium = false,
     IntroEnabled = false,
     SaveConfig = true,
@@ -3951,17 +3951,24 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local savedPosition = nil
 
+-- Ensure we handle the case where character respawns
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+    humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+end)
 
 tpSection:AddButton({
     Name = "Save Position",
     Callback = function()
-        savedPosition = humanoidRootPart.Position
-        OrionLib:MakeNotification({
-            Name = "Position Saved",
-            Content = "Your position has been saved at: " .. tostring(savedPosition),
-            Image = "rbxassetid://4483345998",  
-            Time = 5
-        })
+        if humanoidRootPart then
+            savedPosition = humanoidRootPart.Position
+            OrionLib:MakeNotification({
+                Name = "Position Saved",
+                Content = "Your position has been saved at: " .. tostring(savedPosition),
+                Image = "rbxassetid://4483345998",  
+                Time = 5
+            })
+        end
     end
 })
 
@@ -3969,13 +3976,24 @@ tpSection:AddButton({
     Name = "GoTo Saved Position",
     Callback = function()
         if savedPosition then
-            humanoidRootPart.CFrame = CFrame.new(savedPosition)
-            OrionLib:MakeNotification({
-                Name = "Teleport Successful",
-                Content = "You have been teleported to your saved position.",
-                Image = "rbxassetid://4483345998",
-                Time = 5
-            })
+            -- Ensure the character is fully loaded before teleporting
+            if humanoidRootPart then
+                -- Set CFrame for full position and orientation (use Position if you don't want to change orientation)
+                humanoidRootPart.CFrame = CFrame.new(savedPosition)
+                OrionLib:MakeNotification({
+                    Name = "Teleport Successful",
+                    Content = "You have been teleported to your saved position.",
+                    Image = "rbxassetid://4483345998",
+                    Time = 5
+                })
+            else
+                OrionLib:MakeNotification({
+                    Name = "Error",
+                    Content = "HumanoidRootPart not found! Teleportation failed.",
+                    Image = "rbxassetid://4483345998",
+                    Time = 5
+                })
+            end
         else
             OrionLib:MakeNotification({
                 Name = "Error",
@@ -3986,7 +4004,6 @@ tpSection:AddButton({
         end
     end
 })
-
 
 tpSection:AddButton({
     Name = "Clear Saved Position",
@@ -4425,106 +4442,12 @@ mageSection:AddButton({
     Callback = ToggleAntiBang
 })
 
-animSection:AddButton({
-    Name = "Neck Snap",
+
+tpSection:AddButton({
+    Name = "Tp into sky",
     Callback = function()
-        
-        for i, v in pairs(game.Players:GetPlayers()) do
-
-            local AnimationId = "35154961"
-            local Anim = Instance.new("Animation")
-            Anim.AnimationId = "rbxassetid://" .. AnimationId
-            local k = LocalPlayer.Character.Humanoid:LoadAnimation(Anim)
-            k:Play()
-            wait(1.4)
-            k:Stop()
-            wait()
-
-
-            function Iterate(instance, func)
-                for _, v in next, instance:GetChildren() do
-                    func(v)
-                end
-            end
-
-        
-            local limbs = {
-                ["Right Leg"] = true;
-                ["Right Arm"] = true;
-                ["Left Leg"] = true;
-                ["Left Arm"] = true;
-            }
-
-     
-            Iterate(LocalPlayer.Character, function(v)
-                if v:IsA("BasePart") then
-                    local attachment = Instance.new("Attachment")
-                    attachment.Parent = v
-                    attachment.Name = (v.Name .. "[Attachment]")
-
-                    if limbs[v.Name] then
-                        attachment.Position = Vector3.new(0, v.Size.Y/2, 0)
-                    elseif v.Name == "Head" then
-                        attachment.Position = Vector3.new(0, -v.Size.Y/2, 0)
-                        attachment.Rotation = Vector3.new(0, 0, -90)
-                    end
-                end
-            end)
-
-    
-            local leftLegAttachment = Instance.new("Attachment")
-            leftLegAttachment.Position = Vector3.new(-.5, -1, 0)
-            leftLegAttachment.Rotation = Vector3.new(0, -90, 0)
-            local rightLegAttachment = Instance.new("Attachment")
-            rightLegAttachment.Position = Vector3.new(.5, -1, 0)
-            rightLegAttachment.Rotation = Vector3.new(0, -90, 0)
-
-
-            rightLegAttachment.Parent, leftLegAttachment.Parent = LocalPlayer.Character.Torso, LocalPlayer.Character.Torso
-
-            local jointAttachments = {
-                ['Head'] = {
-                    ['Attachment0'] = LocalPlayer.Character.Torso['NeckAttachment'];
-                    ['Attachment1'] = LocalPlayer.Character.Head['Head[Attachment]'];
-                };
-                ['Left Arm'] = {
-                    ['Attachment0'] = LocalPlayer.Character.Torso['LeftCollarAttachment'];
-                    ['Attachment1'] = LocalPlayer.Character['Left Arm']['Left Arm[Attachment]'];
-                };
-                ['Right Arm'] = {
-                    ['Attachment0'] = LocalPlayer.Character.Torso['RightCollarAttachment'];
-                    ['Attachment1'] = LocalPlayer.Character['Right Arm']['Right Arm[Attachment]'];
-                };
-                ['Left Leg'] = {
-                    ['Attachment0'] = leftLegAttachment;
-                    ['Attachment1'] = LocalPlayer.Character['Left Leg']['Left Leg[Attachment]'];
-                };
-                ['Right Leg'] = {
-                    ['Attachment0'] = rightLegAttachment;
-                    ['Attachment1'] = LocalPlayer.Character['Right Leg']['Right Leg[Attachment]'];
-                };
-            }
-
-            LocalPlayer.Character.Humanoid.PlatformStand = true
-
-
-            Iterate(LocalPlayer.Character, function(v)
-                if v:IsA("BasePart") then
-                    if jointAttachments[v.Name] then
-                        local ballSocketJoint = Instance.new("BallSocketConstraint")
-                        ballSocketJoint.Parent = v
-                        ballSocketJoint.Radius = 0.15
-                        ballSocketJoint.Attachment0, ballSocketJoint.Attachment1 = jointAttachments[v.Name]['Attachment0'], jointAttachments[v.Name]['Attachment1']
-                    end
-                end
-            end)
-
-            Iterate(LocalPlayer.Character.Torso, function(v)
-                if v:IsA("Motor") then
-                    v:Remove()
-                end
-            end)
-        end
+        local savedPosition = player.Character.PrimaryPart.Position
+        player.Character:SetPrimaryPartCFrame(CFrame.new(savedPosition.X, 100000, savedPosition.Z))
     end
 })
 
