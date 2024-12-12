@@ -2795,10 +2795,17 @@ local function isR15(character)
     return character:FindFirstChild("UpperTorso") ~= nil
 end
 
+local function getTorso(character)
+    return character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Torso")
+end
+
+local function getRoot(character)
+    return character:FindFirstChild("HumanoidRootPart")
+end
 
 local function toggleFaceBang()
     if bangActive then
-        
+
         bangActive = false
         if animationTrack then
             animationTrack:Stop()
@@ -2808,45 +2815,58 @@ local function toggleFaceBang()
             faceBangConnection:Disconnect()
         end
     else
-        
-        bangActive = true
-        local speaker = Players.LocalPlayer
-        local targetPlayer = selectedPlayer 
-        if not speaker.Character or not targetPlayer or not targetPlayer.Character then
+
+        if not selectedPlayer or not selectedPlayer.Character then
             return OrionLib:MakeNotification({
                 Name = "Face Bang",
-                Content = "Target player not selected or not found!",
+                Content = "Selected player is invalid!",
                 Time = 5,
             })
         end
 
+        local speaker = Players.LocalPlayer
+        if not speaker.Character then
+            return OrionLib:MakeNotification({
+                Name = "Face Bang",
+                Content = "Your character is not loaded!",
+                Time = 5,
+            })
+        end
 
-        local humanoid = speaker.Character:FindFirstChildOfClass("Humanoid")
+        local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
         if not humanoid then return end
 
-        local animationId = isR15(speaker.Character) and "rbxassetid://5918726674" or "rbxassetid://148840371"
+        bangActive = true
         bangAnimation = Instance.new("Animation")
-        bangAnimation.AnimationId = animationId
+        bangAnimation.AnimationId = isR15(speaker.Character) and "rbxassetid://5918726674" or "rbxassetid://148840371"
         animationTrack = humanoid:LoadAnimation(bangAnimation)
-        animationTrack:Play()
+        animationTrack:Play(0.1, 1, 1)
         animationTrack:AdjustSpeed(5)
+
+        local bangDied = humanoid.Died:Connect(function()
+            animationTrack:Stop()
+            bangAnimation:Destroy()
+            bangDied:Disconnect()
+            bangActive = false
+        end)
+
+        local bangOffset = CFrame.new(0, 2.3, -1.1)
 
         faceBangConnection = RunService.Heartbeat:Connect(function()
             if not bangActive then return end
-            local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-            local targetHead = targetPlayer.Character:FindFirstChild("Head") or targetPlayer.Character:FindFirstChild("FaceFrontAttachment")
-            local speakerRoot = speaker.Character:FindFirstChild("HumanoidRootPart")
 
-            if targetRoot and targetHead and speakerRoot then
-                local offset = targetHead.CFrame.LookVector * 1 + Vector3.new(0, 0, 0.4)  
-                local targetLookAt = (targetHead.Position - speakerRoot.Position).unit
-                speakerRoot.CFrame = CFrame.new(targetHead.Position + offset, targetHead.Position)
+            local targetRoot = getTorso(selectedPlayer.Character)
+            local speakerRoot = getRoot(speaker.Character)
+
+            if targetRoot and speakerRoot then
+                speakerRoot.CFrame = targetRoot.CFrame * bangOffset * CFrame.Angles(0, math.pi, 0)
+                speakerRoot.Velocity = Vector3.new(0, 0, 0)
             else
                 bangActive = false
                 faceBangConnection:Disconnect()
-                return OrionLib:MakeNotification({
+                OrionLib:MakeNotification({
                     Name = "Face Bang",
-                    Content = "Target is missing Head or FaceFrontAttachment!",
+                    Content = "Target player is missing essential parts!",
                     Time = 5,
                 })
             end
@@ -2917,6 +2937,7 @@ end
 
 
 
+
 pltargetTab:AddTextbox({
     Name = "Player to Target:",
     Default = "",
@@ -2949,12 +2970,11 @@ pltargetTab:AddButton({
 })
 
 pltargetTab:AddButton({
-    Name = "tpBang",
+    Name = "TpBang",
     Callback = function()
         toggleFollow()
     end
 })
-
 
 pltargetTab:AddButton({
     Name = "FaceBang",
