@@ -13,7 +13,7 @@ __________ __          __   _______          ________
             --// • Version: 3.6
             --// • Libraries & Modules: 1
             --// • Developers: r4ge2
-            --// • Average Load Time: 0 - 5
+            --// • Average Load Time: 0 - 5s
 
 
 --]]
@@ -89,7 +89,7 @@ local pltargetTab = Window:MakeTab({
 
 local contTab = Window:MakeTab({
     Name = "alt control",
-    Icon = "rbxassetid://7733960981",
+    Icon = "rbxassetid://7734053426",
     PremiumOnly = false
 })
 
@@ -2532,66 +2532,6 @@ miscTab:AddButton({
 
 ----------------------------------------------
 
-
-local infoTab = Window:MakeTab({
-    Name = "externals",
-    Icon = "rbxassetid://7734053426",
-    PremiumOnly = false
-})
-
-infoTab:AddButton({
-	Name = "Infinite Yield",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-	end
-})
-
-infoTab:AddButton({
-	Name = "Nameless Admin",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"))()
-	end
-})
-
-infoTab:AddButton({
-	Name = "Dex Explorer 2.0 (Raspberry Pi)",
-	Callback = function()
-		loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/Dex%20Explorer.txt"))()
-	end
-})
-
-
-infoTab:AddButton({
-	Name = "Audio Logger",
-	Callback = function()
-		loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
-	end
-})
-
-infoTab:AddButton({
-	Name = "DarkDex 4.0 (Moon & Courtney)",
-	Callback = function()
-		loadstring(game:HttpGet("https://gist.githubusercontent.com/DinosaurXxX/b757fe011e7e600c0873f967fe427dc2/raw/ee5324771f017073fc30e640323ac2a9b3bfc550/dark%2520dex%2520v4"))()
-	end
-})
-
-infoTab:AddButton({
-	Name = "DarkDex 4.0 (Moon & Courtney)",
-	Callback = function()
-		loadstring(game:HttpGet("https://gist.githubusercontent.com/DinosaurXxX/b757fe011e7e600c0873f967fe427dc2/raw/ee5324771f017073fc30e640323ac2a9b3bfc550/dark%2520dex%2520v4"))()
-	end
-})
-
-infoTab:AddButton({
-	Name = "System Broken",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/script"))()
-	end
-})
-
-
-----------------------------------------------
-
 local selectedPlayer = nil
 local espEnabled = false
 local espBox = nil
@@ -4671,9 +4611,9 @@ contTab:AddButton({
     end
 })
 contTab:AddParagraph("About","The Alt Control System allows other players to control your character using commands. You can whitelist players to give them control, blacklist others to prevent them from interacting with your character, and use commands to teleport, move, spin, or change other settings.")
-contTab:AddParagraph("Instruction","In order for you to be controlled by another player with commands, You need to run the following command ( .wishlist <playername> )  and that player can now control you, also to stop the already wishlisted player do ( .blacklist <playername> ). ")
-contTab:AddParagraph("Commands"," .cmds, .reset,  .say <message>,  .dance,  .whitelist <player>,  .coinflip,  .bring,  .follow,  .unfollow,  .setprefix <newPrefix>,  .funfact,  .time,  .speed,  .blacklist <player>,  .walkto <player>,  .announce <announcement>,  .jobid,  .aliases <command>,  .math <operation> <nums>,  .playercount,  .lua <lua>,  .spin <speed>,  .float <height>,  .orbit <speed> <radius>,  .jump")
-contTab:AddParagraph("How does it work?,when you wishlist someone the script constantly checks what the wishlisted player types in the chat, And as soon as it detects anything related to the commands it does it on my character.")
+contTab:AddParagraph("Instruction","In order for you to be controlled by another player with commands, You need to run the following command ( .whitelist <playername> ) and that player can now control you. and if you wanne stop the whitelisted player from controlling you, Do ( .blacklist <player name> ) ")
+contTab:AddParagraph("Commands",".cmds, .reset,  .say <message>,  .dance,  .whitelist <player>, .blacklist <player>,  .coinflip,  .bring,  .follow,  .unfollow,  .setprefix <newPrefix>,  .rizz,  .time,  .speed,  .blacklist <player>,  .walkto <player>,  .announce <announcement>,  .jobid,  .aliases <command>,  .math <operation> <nums>,  .playercount,  .lua <lua>,  .spin <speed>,  .float <height>,  .orbit <speed> <radius>,  .jump")
+contTab:AddParagraph("How does it work?","when you wishlist someone the script constantly checks what the wishlisted player types in the chat, And as soon as it detects anything related to the commands, It does that command on my character.")
 
 
 OrionLib:Init()
