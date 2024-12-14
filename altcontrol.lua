@@ -1,6 +1,4 @@
 
-
-
 local bootTime = os.time()
 local disconnected = false
 
@@ -40,9 +38,6 @@ if prefix:len() > 1 then
 	return
 end
 
-local lunarbotversion = "v0.1.3 Public Beta Release"
-local lunarbotchangelogs = "Added a few commands!"
-
 local gameData = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
 local status = nil
 local followplr = nil
@@ -68,7 +63,16 @@ local function chat(msg)
 end
 
 local funfacts = {
-	"eeeeeeeee",
+    "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3000 years old and still edible!",
+    "Octopuses have three hearts, and two of them stop beating when they swim.",
+    "Bananas are berries, but strawberries aren't!",
+    "A group of flamingos is called a 'flamboyance.'",
+    "Wombat poop is cube-shaped. This helps it stay in place and not roll away.",
+    "Sharks existed before trees—they've been around for over 400 million years!",
+    "A day on Venus is longer than a year on Venus.",
+    "The heart of a blue whale is so large, a human could crawl through its arteries.",
+    "There's a species of jellyfish that can revert its cells to an earlier state, making it biologically immortal!",
+    "Sloths can hold their breath longer than dolphins—up to 40 minutes!"
 }
 
 local messageReceived = game.TextChatService.TextChannels.RBXGeneral.MessageReceived
@@ -198,7 +202,7 @@ commands = {
 	reset = {
 		Name = "reset",
 		Aliases = {"re"},
-		Use = "Respawns LunarBot!",
+		Use = "Respawns pluto",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			local hum = bot.Character:FindFirstChildWhichIsA("Humanoid")
@@ -913,11 +917,11 @@ local cmdcon = messageReceived:Connect(function(data)
 end)
 
 bot.Chatted:Connect(function(msg)
-	if (string.lower(msg) == "lunar.disable()" or string.lower(msg) == "lunar.disconnect()") and disconnected == false then
+	if (string.lower(msg) == "pluto.disable()" or string.lower(msg) == "pluto.disconnect()") and disconnected == false then
 		cmdcon:Disconnect()
 		disconnected = true
 		wait()
-		chat("Successfully disconnected LunarBot.")
+		chat("Successfully disconnected pluto.")
 	end
 end)
 
@@ -954,4 +958,3 @@ task.spawn(function()
 		end
 	end
 end)
-
