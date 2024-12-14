@@ -200,6 +200,53 @@ commands = {
 			end)
 		end,
 	},
+
+    headsit = {
+		Name = "headsit",
+		Aliases = {"sithead"},
+		Use = "Makes pluto sit on the head of the targeted player.",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				if not followplr or not followplr.Character or not followplr.Character:FindFirstChild("Head") then
+					chat("No valid target player selected!")
+					return
+				end
+	
+				local bot = game.Players.LocalPlayer
+				local botRoot = bot.Character and bot.Character:FindFirstChild("HumanoidRootPart")
+				local targetHead = followplr.Character.Head
+	
+				if botRoot then
+					local active = true
+	
+					repeat
+						pcall(function()
+							if not botRoot:FindFirstChild("BreakVelocity") then
+								local tempV = Instance.new("BodyVelocity")
+								tempV.Name = "BreakVelocity"
+								tempV.Velocity = Vector3.new(0, 0, 0)
+								tempV.MaxForce = Vector3.new(4000, 4000, 4000)
+								tempV.Parent = botRoot
+							end
+	
+							bot.Character.Humanoid.Sit = true
+							botRoot.CFrame = targetHead.CFrame * CFrame.new(0, 2, 0)
+							botRoot.Velocity = Vector3.new(0, 0, 0)
+						end)
+						task.wait()
+					until not active -- Replace this with your desired exit condition.
+	
+					if botRoot:FindFirstChild("BreakVelocity") then
+						botRoot.BreakVelocity:Destroy()
+					end
+				else
+					chat("Bot character not found!")
+				end
+			end)
+		end,
+	},
+
 	reset = {
 		Name = "reset",
 		Aliases = {"re"},
@@ -617,7 +664,7 @@ commands = {
 	funfact = {
 		Name = "rizz",
 		Aliases = {"rizzy", "pickupline"},
-		Use = "Gives you a random fun fact!",
+		Use = "rizzes people up",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			pcall(function()
