@@ -19,8 +19,6 @@ __________ __          __   _______          ________
 --]]
 
 
-
-
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
 
@@ -89,6 +87,11 @@ local pltargetTab = Window:MakeTab({
     PremiumOnly = false
 })
 
+local contTab = Window:MakeTab({
+    Name = "alt control",
+    Icon = "rbxassetid://7733960981",
+    PremiumOnly = false
+})
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -4625,6 +4628,52 @@ tpSection:AddButton({
         player.Character:SetPrimaryPartCFrame(CFrame.new(savedPosition.X, 100000, savedPosition.Z))
     end
 })
+
+local isAltControlLoaded = false
+
+contTab:AddButton({
+    Name = "Enable Alt Control",
+    Callback = function()
+       
+        if isAltControlLoaded then
+            OrionLib:MakeNotification({
+                Name = "Warning",
+                Content = "Alt control is already activated!",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+            return 
+        end
+
+
+        local success, err = pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Horizon89002/PLUT0_V3/main/altcontrol.lua"))()
+        end)
+
+        
+        if success then
+            isAltControlLoaded = true
+            OrionLib:MakeNotification({
+                Name = "Alt Control Activated",
+                Content = "Have fun!",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+        else
+        
+            OrionLib:MakeNotification({
+                Name = "Error",
+                Content = "Failed to load the alt control script: " .. tostring(err),
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+        end
+    end
+})
+contTab:AddParagraph("About","The Alt Control System allows other players to control your character using commands. You can whitelist players to give them control, blacklist others to prevent them from interacting with your character, and use commands to teleport, move, spin, or change other settings.")
+contTab:AddParagraph("Instruction","In order for you to be controlled by another player with commands, You need to run the following command ( .wishlist <playername> )  and that player can now control you, also to stop the already wishlisted player do ( .blacklist <playername> ). ")
+contTab:AddParagraph("Commands"," .cmds, .reset,  .say <message>,  .dance,  .whitelist <player>,  .coinflip,  .bring,  .follow,  .unfollow,  .setprefix <newPrefix>,  .funfact,  .time,  .speed,  .blacklist <player>,  .walkto <player>,  .announce <announcement>,  .jobid,  .aliases <command>,  .math <operation> <nums>,  .playercount,  .lua <lua>,  .spin <speed>,  .float <height>,  .orbit <speed> <radius>,  .jump")
+contTab:AddParagraph("How does it work?,when you wishlist someone the script constantly checks what the wishlisted player types in the chat, And as soon as it detects anything related to the commands it does it on my character.")
 
 
 OrionLib:Init()
