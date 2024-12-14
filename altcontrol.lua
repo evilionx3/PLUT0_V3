@@ -1,7 +1,7 @@
    
-contTab:AddParagraph("About","The Alt Control System allows other players to control your character using commands. You can whitelist players to give them control, blacklist others to prevent them from interacting with your character, and use commands to teleport, move, spin, or change other settings.")
-contTab:AddParagraph("Instruction","In order for you to be controled by another player, You need to run the following command ( .wishlist <playername> )  and that player can now control you, also to stop the already wishlisted player do ( .blacklist <playername> . ")
-contTab:AddParagraph("Commands",". cmds, . reset, . say <message>, . dance, . whitelist <player>, . coinflip, . bring, . follow, . unfollow, . setprefix <newPrefix>, . funfact, . time, . speed, . blacklist <player>, . walkto <player>, . announce <announcement>, . jobid, . aliases <command>, . math <operation> <nums>, . playercount, . lua <lua>, . spin <speed>, . float <height>, . orbit <speed> <radius>, . jump")
+contTab:AddLabel("About","The Alt Control System allows other players to control your character using commands. You can whitelist players to give them control, blacklist others to prevent them from interacting with your character, and use commands to teleport, move, spin, or change other settings.")
+contTab:AddLabel("Instruction","In order for you to be controled by another player, You need to run the following command ( .wishlist <playername> )  and that player can now control you, also to stop the already wishlisted player do ( .blacklist <playername> . ")
+contTab:AddLabel("Commands",". cmds, . reset, . say <message>, . dance, . whitelist <player>, . coinflip, . bring, . follow, . unfollow, . setprefix <newPrefix>, . funfact, . time, . speed, . blacklist <player>, . walkto <player>, . announce <announcement>, . jobid, . aliases <command>, . math <operation> <nums>, . playercount, . lua <lua>, . spin <speed>, . float <height>, . orbit <speed> <radius>, . jump")
 
 
 local bootTime = os.time()
