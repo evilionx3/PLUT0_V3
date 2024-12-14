@@ -63,17 +63,18 @@ local function chat(msg)
 end
 
 local funfacts = {
-    "Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3000 years old and still edible!",
-    "Octopuses have three hearts, and two of them stop beating when they swim.",
-    "Bananas are berries, but strawberries aren't!",
-    "A group of flamingos is called a 'flamboyance.'",
-    "Wombat poop is cube-shaped. This helps it stay in place and not roll away.",
-    "Sharks existed before trees—they've been around for over 400 million years!",
-    "A day on Venus is longer than a year on Venus.",
-    "The heart of a blue whale is so large, a human could crawl through its arteries.",
-    "There's a species of jellyfish that can revert its cells to an earlier state, making it biologically immortal!",
-    "Sloths can hold their breath longer than dolphins—up to 40 minutes!"
+    "You must be made of stardust, because every time I see you, the universe feels complete.",
+    "Are you an algorithm? Because you’ve just solved all my problems.",
+    "You’re like my favorite song—I could replay you all day and never get tired of it.",
+    "Are you gravity? Because I can’t seem to stay away from you.",
+    "You’re the plot twist I never saw coming but always needed.",
+    "If beauty were a constellation, you’d be the North Star.",
+    "You must be a poet, because every time you speak, it sounds like art.",
+    "Are you a rare collectible? Because I feel like I’ve struck gold meeting you.",
+    "You’re like a sunrise—impossible to ignore and always worth waking up for.",
+    "Do you own a compass? Because I keep finding my way back to you."
 }
+
 
 local messageReceived = game.TextChatService.TextChannels.RBXGeneral.MessageReceived
 
@@ -614,15 +615,15 @@ commands = {
 	},
 	
 	funfact = {
-		Name = "funfact",
-		Aliases = {"fact", "randomfact"},
+		Name = "rizz",
+		Aliases = {"rizzy", "pickupline"},
 		Use = "Gives you a random fun fact!",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			pcall(function()
 				local rnd = funfacts[math.random(1, #funfacts)]
 				
-				chat("Fun Fact: " .. rnd)
+				chat("" .. rnd)
 			end)
 		end,
 	},
