@@ -75,14 +75,32 @@ local funfacts = {
     "Do you own a compass? Because I keep finding my way back to you."
 }
 
+local trashtalk = {
+    "You're about as sharp as a marble.",
+    "Even ghosts would be bored by you.",
+    "You’re proof that not all mistakes get erased.",
+    "If silence is golden, please stay rich.",
+    "You bring nothing to the table but crumbs.",
+    "Your existence lowers the average IQ.",
+    "Even shadows leave you behind.",
+    "You’re the plot twist no one wanted.",
+    "Life’s trying to ghost you; take the hint.",
+    "You’re why warning labels exist.",
+    "Your best argument is a Wi-Fi disconnection.",
+    "Rock bottom is calling; it says you're late.",
+    "Even the void wouldn’t want you back.",
+    "Your presence is the perfect cure for joy.",
+    "You’re the NPC no one talks to."
+}
+
 
 local messageReceived = game.TextChatService.TextChannels.RBXGeneral.MessageReceived
 
 local commandsMessage = {
 	"cmds, reset, say <message>, dance, whitelist <player>, coinflip, bring, follow, unfollow,",
-	"setprefix <newPrefix>, funfact, speed, blacklist <player>, walkto <player>",
+	"setprefix <newPrefix>, funfact, speed, blacklist <player>, walkto <player>,  .trashtalk",
 	"announce <announcement>,jobid, aliases <command>, math <operation> <nums>, playercount",
-	"lua <lua>, spin <speed>, float <height>, orbit <speed> <radius>, jump,",
+	"lua <lua>, spin <speed>, float <height>, orbit <speed> <radius>, jump, .to <player>, .nosay",
 }
 
 local orbitcon
@@ -404,7 +422,7 @@ commands = {
 	jump = {
 		Name = "jump",
 		Aliases = {},
-		Use = "Makes LunarBot jump!",
+		Use = "Makes pluto jump!",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			bot.Character.Humanoid.Jump = true
@@ -428,7 +446,7 @@ commands = {
 	whitelist = {
 		Name = "whitelist",
 		Aliases = {"wl"},
-		Use = "Whitelists a player, meaning they can use LunarBot. An owner-only command!",
+		Use = "Whitelists a player, meaning they can use pluto. An owner-only command!",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			local towhitelist = args[2]
@@ -619,7 +637,7 @@ commands = {
 	
 	funfact = {
 		Name = "rizz",
-		Aliases = {"rizzy", "pickupline"},
+		Aliases = {"rizzy", "rizztalk"},
 		Use = "rizzes people up",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
@@ -760,9 +778,23 @@ commands = {
 		end,
 	},
 	
+    trashtalk = {
+		Name = "trashtalk",
+		Aliases = {"bully"},
+		Use = "trashtalks people",
+		Enabled = true,
+		CommandFunction = function(msg, args, speaker)
+			pcall(function()
+				local rnd = funfacts[math.random(1, #funfacts)]
+				
+				chat("" .. rnd)
+			end)
+		end,
+	},
+
 	altcontrol = {
-		Name = "altcontrol",
-		Aliases = {"altctrl"},
+		Name = "nosay",
+		Aliases = {"removesay"},
 		Use = "Removes the name from the .say command.",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
