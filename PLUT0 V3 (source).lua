@@ -4612,7 +4612,7 @@ contTab:AddButton({
 })
 contTab:AddParagraph("About","The Alt Control System allows other players to control your character using commands. You can whitelist players to give them control, blacklist others to prevent them from interacting with your character, and use commands to teleport, move, spin, or change other settings.")
 contTab:AddParagraph("Instruction","In order for you to be controlled by another player with commands, You need to run the following command ( .whitelist <playername> ) and that player can now control you. and if you wanne stop the whitelisted player from controlling you, Do ( .blacklist <player name> ) ")
-contTab:AddParagraph("Commands",".cmds, .reset,  .say <message>,  .dance,  .whitelist <player>, .blacklist <player>,  .coinflip,  .bring,  .follow,  .unfollow,  .setprefix <newPrefix>,  .rizz,  .time,  .speed,  .blacklist <player>,  .walkto <player>,  .announce <announcement>,  .jobid,  .aliases <command>,  .math <operation> <nums>,  .playercount,  .lua <lua>,  .spin <speed>,  .float <height>,  .orbit <speed> <radius>,  .jump")
+contTab:AddParagraph("Commands",".cmds, .reset .say <message> .dance .whitelist <player>, .blacklist <player> .coinflip .bring .follow .unfollow .setprefix <newPrefix> .rizz,  .time,  .speed,  .blacklist <player>,  .walkto <player>,  .announce <announcement>,  .jobid,  .aliases <command>,  .math <operation> <nums>,  .playercount,  .lua <lua>,  .spin <speed>,  .float <height>,  .orbit <speed> <radius>, .jump, .trashtalk, .noname")
 contTab:AddParagraph("How does it work?","when you wishlist someone the script constantly checks what the wishlisted player types in the chat, And as soon as it detects anything related to the commands, It does that command on my character.")
 
 
