@@ -99,8 +99,8 @@ local messageReceived = game.TextChatService.TextChannels.RBXGeneral.MessageRece
 local commandsMessage = {
 	"cmds, reset, say <message>, dance, whitelist <player>, coinflip, bring, follow, unfollow,",
 	"setprefix <newPrefix>, funfact, speed, blacklist <player>, walkto <player>,  .trashtalk",
-	"announce <announcement>,jobid, aliases <command>, math <operation> <nums>, playercount",
-	"lua <lua>, spin <speed>, float <height>, orbit <speed> <radius>, jump, .to <player>, .nosay",
+	"announce <announcement>,jobid, aliases <command>, math <operation> <nums>, .playercount",
+	"lua <lua>, spin <speed>, float <height>, orbit <speed> <radius>, jump, .to <player>,.noname",
 }
 
 local orbitcon
@@ -793,14 +793,14 @@ commands = {
 	},
 
 	altcontrol = {
-		Name = "nosay",
-		Aliases = {"removesay"},
+		Name = "noname",
+		Aliases = {"removename"},
 		Use = "Removes the name from the .say command.",
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			pcall(function()
 				altctrl = true
-				chat("Enabled alt control mode!")
+				chat("removed the name from the say command")
 			end)
 		end,
 	},
