@@ -785,7 +785,7 @@ commands = {
 		Enabled = true,
 		CommandFunction = function(msg, args, speaker)
 			pcall(function()
-				local rnd = funfacts[math.random(1, #funfacts)]
+				local rnd = trashtalk[math.random(1, #trashtalk)]
 				
 				chat("" .. rnd)
 			end)
