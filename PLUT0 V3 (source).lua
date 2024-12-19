@@ -594,13 +594,17 @@ local ball = character:WaitForChild("HumanoidRootPart")
 local function toggleRolling()
     isRolling = not isRolling
     if isRolling then
-        ball.Shape = Enum.PartType.Ball
+        local mesh = Instance.new("SpecialMesh")
+        mesh.MeshType = Enum.MeshType.Sphere
+        mesh.Parent = ball
         ball.Size = Vector3.new(5, 5, 5)
+        
         for i, v in ipairs(character:GetDescendants()) do
             if v:IsA("BasePart") then
                 v.CanCollide = false
             end
         end
+
         local humanoid = character:WaitForChild("Humanoid")
         local params = RaycastParams.new()
         params.FilterType = Enum.RaycastFilterType.Blacklist
@@ -611,18 +615,21 @@ local function toggleRolling()
             ball.CanCollide = true
             humanoid.PlatformStand = true
             if UsersInputService:GetFocusedTextBox() then return end
+
+            local rotVel = ball.AssemblyAngularVelocity
             if UsersInputService:IsKeyDown("W") then
-                ball.RotVelocity -= Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
+                rotVel = rotVel - Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
             end
             if UsersInputService:IsKeyDown("A") then
-                ball.RotVelocity -= Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
+                rotVel = rotVel - Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
             end
             if UsersInputService:IsKeyDown("S") then
-                ball.RotVelocity += Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
+                rotVel = rotVel + Camera.CFrame.RightVector * delta * SPEED_MULTIPLIER
             end
             if UsersInputService:IsKeyDown("D") then
-                ball.RotVelocity += Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
+                rotVel = rotVel + Camera.CFrame.LookVector * delta * SPEED_MULTIPLIER
             end
+            ball.AssemblyAngularVelocity = rotVel
         end)
 
         UsersInputService.JumpRequest:Connect(function()
@@ -643,7 +650,7 @@ local function toggleRolling()
         Camera.CameraSubject = ball
     else
         ball.Shape = Enum.PartType.Block
-        ball.Size = Vector3.new(2, 2, 2) -- Default size, adjust if necessary
+        ball.Size = Vector3.new(2, 2, 2)
         for i, v in ipairs(character:GetDescendants()) do
             if v:IsA("BasePart") then
                 v.CanCollide = true
@@ -4314,68 +4321,84 @@ animSection:AddButton({
 })
 
 
-local dinoWalkAnimationPlaying = false
-local dinoWalkCurrentAnim = nil
-local dinoWalkHeartbeatConnection = nil 
-local RunService = game:GetService("RunService")
 
 
-local function getCharacterAndHumanoid()
-    local plr = game.Players.LocalPlayer
-    local character = plr.Character or plr.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid")
-    return character, humanoid
+
+
+
+
+local isGooning = false
+local goonAnim1, goonAnim2, goonDied
+
+local function startGooning(humanoid)
+    if humanoid.RigType ~= Enum.HumanoidRigType.R6 then
+        OrionLib:MakeNotification({
+            Name = "R6 Required",
+            Content = "This command requires the R6 rig type.",
+            Time = 5
+        })
+        return
+    end
+
+    local Anim_1 = Instance.new("Animation")
+    local Anim_2 = Instance.new("Animation")
+    Anim_1.AnimationId = "rbxassetid://72042024"
+    Anim_2.AnimationId = "rbxassetid://168268306"
+
+    goonAnim1 = humanoid:LoadAnimation(Anim_1)
+    goonAnim2 = humanoid:LoadAnimation(Anim_2)
+
+    goonAnim1.Looped = true
+    goonAnim2.Looped = true
+
+    goonAnim1:Play()
+    goonAnim2:Play()
+
+    isGooning = true
+
+    goonDied = humanoid.Died:Connect(function()
+        stopGooning()
+    end)
 end
 
+local function stopGooning()
+    if goonAnim1 then goonAnim1:Stop() end
+    if goonAnim2 then goonAnim2:Stop() end
+
+    if goonDied then
+        goonDied:Disconnect()
+        goonDied = nil
+    end
+
+    isGooning = false
+end
+
+
 animSection:AddButton({
-    Name = "goon",
+    Name = "Goon",
     Callback = function()
-        local character, humanoid = getCharacterAndHumanoid()
-        if humanoid then
-            local AnimationId = "168268306"
-            local Anim = Instance.new("Animation")
-            Anim.AnimationId = "rbxassetid://" .. AnimationId
+        local player = game.Players.LocalPlayer
+        local humanoid = player.Character and player.Character:FindFirstChildWhichIsA("Humanoid")
 
-            if not dinoWalkCurrentAnim or dinoWalkCurrentAnim.Parent ~= humanoid then
+        if not humanoid then
+            OrionLib:MakeNotification({
+                Name = "Error",
+                Content = "Humanoid not found!",
+                Time = 5
+            })
+            return
+        end
 
-                dinoWalkCurrentAnim = humanoid:LoadAnimation(Anim)
-            end
-
-            if dinoWalkAnimationPlaying then
-
-                dinoWalkAnimationPlaying = false
-                if dinoWalkCurrentAnim.IsPlaying then
-                    dinoWalkCurrentAnim:Stop()
-                end
-                if dinoWalkHeartbeatConnection then
-                    dinoWalkHeartbeatConnection:Disconnect()
-                    dinoWalkHeartbeatConnection = nil
-                end
-            else
-
-                dinoWalkAnimationPlaying = true
-                dinoWalkHeartbeatConnection = RunService.Heartbeat:Connect(function()
-                    if dinoWalkCurrentAnim.IsPlaying then
-                        dinoWalkCurrentAnim:Stop()
-                    else
-                        dinoWalkCurrentAnim:Play(0)
-                        dinoWalkCurrentAnim:AdjustSpeed(50)
-                    end
-                end)
-            end
+        if isGooning then
+            stopGooning()
+        else
+            startGooning(humanoid)
         end
     end
 })
 
 
-game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    dinoWalkAnimationPlaying = false
-    if dinoWalkHeartbeatConnection then
-        dinoWalkHeartbeatConnection:Disconnect()
-        dinoWalkHeartbeatConnection = nil
-    end
-    dinoWalkCurrentAnim = nil
-end)
+
 
 mveSection:AddButton({
     Name = "[C] to speed",
