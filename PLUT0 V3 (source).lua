@@ -4639,4 +4639,54 @@ contTab:AddParagraph("Commands",".cmds, .reset .say <message> .dance .whitelist 
 contTab:AddParagraph("How does it work?","when you wishlist someone the script constantly checks what the wishlisted player types in the chat, And as soon as it detects anything related to the commands, It does that command on my character.")
 
 
+local TimeElapsedLabel = miscTab:AddLabel("Time Elapsed: 00:00:00")
+local elapsedTime = 0 
+
+
+
+local function formatTime(seconds)
+    local hours = math.floor(seconds / 3600)
+    local minutes = math.floor((seconds % 3600) / 60)
+    local secs = seconds % 60
+    return string.format("%02d:%02d:%02d", hours, minutes, secs)
+end
+
+
+task.spawn(function()
+    while true do
+        elapsedTime = elapsedTime + 1 
+        TimeElapsedLabel:Set("Time Elapsed: " .. formatTime(elapsedTime))
+        task.wait(1) 
+    end
+end)
+
+miscTab:AddLabel("Game ID: " .. game.GameId)
+miscTab:AddLabel("Job ID: " .. game.JobId)
+
+
+
+local FPSLabel = miscTab:AddLabel("FPS: Calculating...")
+
+task.spawn(function()
+    while true do
+        local fps = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+        FPSLabel:Set("FPS: " .. tostring(fps))
+    end
+end)
+
+miscTab:AddButton({
+    Name = "Rejoin",
+    Callback = function()
+        local TeleportService = game:GetService("TeleportService")
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+    end
+})
+
+miscTab:AddButton({
+    Name = "Kill Roblox",
+    Callback = function()
+        game:Shutdown()
+    end
+})
+
 OrionLib:Init()
