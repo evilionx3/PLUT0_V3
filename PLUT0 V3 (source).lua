@@ -4682,4 +4682,68 @@ miscTab:AddButton({
 })
 
 
+local reverseResolveIntensity = 5
+
+mainTab:AddSlider({
+    Name = "Reverse Resolve Intensity",
+    Min = 1,
+    Max = 10,
+    Default = 5,
+    Color = Color3.fromRGB(255, 255, 255),
+    Increment = 1,
+    ValueName = "Intensity",
+    Callback = function(value)
+        reverseResolveIntensity = value 
+    end
+})
+
+getgenv().Desync = false
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    if getgenv().Desync then
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        if not character then return end 
+
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then return end 
+
+
+        local originalVelocity = humanoidRootPart.Velocity
+
+
+        local randomOffset = Vector3.new(
+            math.random(-1, 1) * reverseResolveIntensity * 1000,
+            math.random(-1, 1) * reverseResolveIntensity * 1000,
+            math.random(-1, 1) * reverseResolveIntensity * 1000
+        )
+
+        humanoidRootPart.Velocity = randomOffset
+        humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.Angles(
+            0,
+            math.random(-1, 1) * reverseResolveIntensity * 0.001,
+            0
+        )
+
+
+        game:GetService("RunService").RenderStepped:Wait()
+
+        humanoidRootPart.Velocity = originalVelocity
+    end
+end)
+
+
+mainTab:AddButton({
+    Name = "velocity Desync",
+    Callback = function()
+        getgenv().Desync = not getgenv().Desync
+        OrionLib:MakeNotification({
+            Name = getgenv().Desync and "Desync Enabled" or "Desync Disabled",
+            Content = getgenv().Desync and "Reverse resolve desync is now active." or "Desync has been turned off.",
+            Image = "rbxassetid://6031761837",
+            Time = 3
+        })
+    end
+})
+
 OrionLib:Init()
