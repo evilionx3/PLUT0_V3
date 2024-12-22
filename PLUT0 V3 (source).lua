@@ -19,7 +19,7 @@ __________ __          __   _______          ________
 --]]
 
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Horizon89002/PLUT0_V3/refs/heads/main/orionmodified.lua')))()
 
 
 local Window = OrionLib:MakeWindow({
@@ -34,7 +34,7 @@ local Window = OrionLib:MakeWindow({
 
 local mainTab = Window:MakeTab({
     Name = "Main",
-    Icon = "rbxassetid://7733960981",
+    Icon = "rbxassetid://7733752575",
     PremiumOnly = false
 })
 
@@ -53,7 +53,7 @@ local funTab = Window:MakeTab({
     PremiumOnly = false
 })
 
-
+ 
 local camSection = mainTab:AddSection({
     Name = "Camera"
 })
@@ -64,7 +64,7 @@ local visSection = mainTab:AddSection({
 
 local miscTab = Window:MakeTab({
     Name = "Misc",
-    Icon = "rbxassetid://7733942651",
+    Icon = "rbxassetid://7733765398",
     PremiumOnly = false
 })
 
@@ -89,7 +89,7 @@ local pltargetTab = Window:MakeTab({
 
 local contTab = Window:MakeTab({
     Name = "alt control",
-    Icon = "rbxassetid://7734053426",
+    Icon = "rbxassetid://7734053495",
     PremiumOnly = false
 })
 
@@ -380,7 +380,7 @@ for _, player in pairs(game.Players:GetPlayers()) do
 end
 
 visSection:AddButton({
-    Name = "ESP (outline)",
+    Name = "highlight",
     Callback = toggleESP
 })
 
@@ -521,12 +521,12 @@ end)
 
 
 visSection:AddButton({
-    Name = "ESP (name)",
+    Name = "name",
     Callback = toggleNameESP
 })
 
 visSection:AddButton({
-    Name = "ESP (tracer)",
+    Name = "tracer",
     Callback = toggleTracerESP
 })
 
@@ -555,7 +555,7 @@ end
 
 
 visSection:AddColorpicker({
-    Name = "ESP Color",
+    Name = "ESP Color changer",
     Default = Color3.fromRGB(255, 0, 0),  
     Callback = function(Value)
         selectedColor = Value 
@@ -2528,14 +2528,6 @@ funTab:AddButton({
 })
 
 
-miscTab:AddButton({
-    Name = "Destroy UI",
-    Callback = function()
-        OrionLib:Destroy()
-    end
-})
-
-
 
 ----------------------------------------------
 
@@ -4022,7 +4014,7 @@ end
 
 
 mageSection:AddButton({
-    Name = "Touch Fling",
+    Name = "touch fling",
     Callback = function()
         hiddenfling = not hiddenfling
 
@@ -4320,13 +4312,6 @@ animSection:AddButton({
     end
 })
 
-
-
-
-
-
-
-
 local isGooning = false
 local goonAnim1, goonAnim2, goonDied
 
@@ -4334,7 +4319,7 @@ local function startGooning(humanoid)
     if humanoid.RigType ~= Enum.HumanoidRigType.R6 then
         OrionLib:MakeNotification({
             Name = "R6 Required",
-            Content = "This command requires the R6 rig type.",
+            Content = "This animation requires the R6 rig type.",
             Time = 5
         })
         return
@@ -4688,5 +4673,13 @@ miscTab:AddButton({
         game:Shutdown()
     end
 })
+
+miscTab:AddButton({
+    Name = "Destroy UI",
+    Callback = function()
+        OrionLib:Destroy()
+    end
+})
+
 
 OrionLib:Init()
