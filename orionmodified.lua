@@ -22,7 +22,7 @@ local OrionLib = {
 			TextDark = Color3.fromRGB(150, 150, 150)
 		}
 	},
-	SelectedTheme = "Default",
+	SelectedTheme = "Amethyst",
 	Folder = nil,
 	SaveCfg = false
 }
@@ -315,13 +315,13 @@ CreateElement("RoundFrame", function(Color, Scale, Offset)
 end)
 
 CreateElement("Button", function()
-    local Button = Create("TextButton", {
-        Text = "",
-        AutoButtonColor = false,
-        BackgroundTransparency = 0.3, 
-        BorderSizePixel = 0
-    })
-    return Button
+	local Button = Create("TextButton", {
+		Text = "",
+		AutoButtonColor = false,
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0
+	})
+	return Button
 end)
 
 CreateElement("ScrollFrame", function(Color, Width)
