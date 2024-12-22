@@ -20,8 +20,8 @@ local OrionLib = {
                         Divider = Color3.fromRGB(60, 60, 90), -- Soft blue divider for separation
                         Text = Color3.fromRGB(200, 220, 255), -- Light sky blue for primary text
                         TextDark = Color3.fromRGB(120, 140, 180) -- Muted steel blue for secondary text
-              }
-    },
+                }
+        },
 	SelectedTheme = "Default",
 	Folder = nil,
 	SaveCfg = false
