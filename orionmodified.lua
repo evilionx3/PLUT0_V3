@@ -8,23 +8,31 @@ local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
 local OrionLib = {
-	Elements = {},
-	ThemeObjects = {},
-	Connections = {},
-	Flags = {},
-	Themes = {
-		Default = {
-			Main = Color3.fromRGB(25, 25, 25),
-			Second = Color3.fromRGB(32, 32, 32),
-			Stroke = Color3.fromRGB(60, 60, 60),
-			Divider = Color3.fromRGB(60, 60, 60),
-			Text = Color3.fromRGB(240, 240, 240),
-			TextDark = Color3.fromRGB(150, 150, 150)
-		}
-	},
-	SelectedTheme = "Amethyst",
-	Folder = nil,
-	SaveCfg = false
+    Elements = {},
+    ThemeObjects = {},
+    Connections = {},
+    Flags = {},
+    Themes = {
+        Default = {
+            Main = Color3.fromRGB(25, 25, 25),
+            Second = Color3.fromRGB(32, 32, 32),
+            Stroke = Color3.fromRGB(60, 60, 60),
+            Divider = Color3.fromRGB(60, 60, 60),
+            Text = Color3.fromRGB(240, 240, 240),
+            TextDark = Color3.fromRGB(150, 150, 150)
+        },
+        BlueTheme = { -- New blue theme
+            Main = Color3.fromRGB(15, 15, 30), -- Deep blue background
+            Second = Color3.fromRGB(20, 20, 40), -- Slightly lighter blue for accents
+            Stroke = Color3.fromRGB(50, 50, 100), -- Blue-gray stroke
+            Divider = Color3.fromRGB(50, 50, 100), -- Matches stroke for consistency
+            Text = Color3.fromRGB(200, 200, 255), -- Soft light blue for text
+            TextDark = Color3.fromRGB(120, 120, 180) -- Muted blue for secondary text
+        }
+    },
+    SelectedTheme = "blueTheme",
+    Folder = nil,
+    SaveCfg = false
 }
 
 --Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
