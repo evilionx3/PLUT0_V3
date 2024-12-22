@@ -1711,7 +1711,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	
 	OrionLib:MakeNotification({
 		Name = "PLUT0_V3 loaded",
-		Content = "welcome to PLUT0!, Have fun!",
+		Content = "Welcome to PLUT0",
 		Time = 5
 	})
 	
