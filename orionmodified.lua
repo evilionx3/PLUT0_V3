@@ -1711,8 +1711,8 @@ function OrionLib:MakeWindow(WindowConfig)
 	end  
 	
 	OrionLib:MakeNotification({
-		Name = "UI Library Upgrade",
-		Content = "New UI Library Available at sirius.menu/discord and sirius.menu/rayfield",
+		Name = "PLUT0_V3 loaded",
+		Content = "welcome to PLUT0!, Have fun!",
 		Time = 5
 	})
 	
