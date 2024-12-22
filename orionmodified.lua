@@ -14,14 +14,14 @@ local OrionLib = {
 	Flags = {},
 	Themes = {
 		Default = {
-			Main = Color3.fromRGB(15, 15, 25), -- Rich dark blue for the main background
-                        Second = Color3.fromRGB(25, 25, 40), -- Slightly lighter dark blue for accents
-                        Stroke = Color3.fromRGB(50, 50, 75), -- Deep blue-gray for strokes
-                        Divider = Color3.fromRGB(60, 60, 90), -- Soft blue divider for separation
-                        Text = Color3.fromRGB(200, 220, 255), -- Light sky blue for primary text
-                        TextDark = Color3.fromRGB(120, 140, 180) -- Muted steel blue for secondary text
-                }
-        },
+			Main = Color3.fromRGB(15, 15, 25),
+			Second = Color3.fromRGB(25, 25, 40),
+			Stroke = Color3.fromRGB(50, 50, 75),
+			Divider = Color3.fromRGB(60, 60, 90),
+			Text = Color3.fromRGB(200, 220, 255),
+			TextDark = Color3.fromRGB(120, 140, 180)
+		}
+	},
 	SelectedTheme = "Default",
 	Folder = nil,
 	SaveCfg = false
@@ -1711,7 +1711,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	end  
 	
 	OrionLib:MakeNotification({
-		Name = "PLUT0_V3 loaded",
+		Name = "PLUT0 loaded successfully",
 		Content = "Welcome to PLUT0",
 		Time = 5
 	})
